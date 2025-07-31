@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Label?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.collections.FXCollections?>
+<?import java.lang.String?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.layout.Region?>
+
+<?import javafx.scene.control.CheckBox?>
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="games.common.controllers.RoomCreationController">
+
+    <padding>
+        <Insets top="10" bottom="10" left="10" right="10"/>
+    </padding>
+
+    <center>
+        <VBox alignment="TOP_CENTER" spacing="10" prefWidth="500">
+            <Label text="Room creating"/>
+
+            <HBox spacing="10" maxWidth="500" prefWidth="500">
+                <Label text="Room name:" style="-fx-padding: 0 10 0 0;" HBox.hgrow="NEVER"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <TextField fx:id="nameTextField" maxWidth="200" HBox.hgrow="NEVER"/>
+            </HBox>
+
+            <HBox spacing="10" maxWidth="500" prefWidth="500">
+                <Label text="Choose game mode:" style="-fx-padding: 0 10 0 0;" HBox.hgrow="NEVER"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <ComboBox fx:id="gameModeComboBox"
+                          value="Tictactoe classic"
+                          maxWidth="200"
+                          HBox.hgrow="NEVER">
+                    <items>
+                        <FXCollections fx:factory="observableArrayList">
+                            <String fx:value="Tictactoe classic"/>
+                        </FXCollections>
+                    </items>
+                </ComboBox>
+            </HBox>
+
+            <HBox spacing="10" maxWidth="500" prefWidth="500">
+                <Label text="Room password:" style="-fx-padding: 0 10 0 0;" HBox.hgrow="NEVER"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <TextField fx:id="passwordTextField" maxWidth="200" HBox.hgrow="NEVER"/>
+            </HBox>
+
+            <HBox spacing="10" maxWidth="500" prefWidth="500">
+                <Label text="Allow to watch:" style="-fx-padding: 0 10 0 0;" HBox.hgrow="NEVER"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <CheckBox fx:id="allowToWatchCheckBox" HBox.hgrow="NEVER" selected="true"/>
+            </HBox>
+
+            <HBox spacing="10" alignment="CENTER">
+                <Button text="Back" onAction="#onBackButtonClick" prefWidth="50"/>
+                <Button text="Create" onAction="#onCreateButtonClick" prefWidth="150"/>
+            </HBox>
+        </VBox>
+    </center>
+
+</BorderPane>

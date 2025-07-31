@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.example</groupId>
+    <artifactId>javava</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <name>javava</name>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <junit.version>5.10.2</junit.version>
+    </properties>
+
+    <dependencies>
+        <!-- core.network -->
+        <dependency>
+            <groupId>com.google.firebase</groupId>
+            <artifactId>firebase-admin</artifactId>
+            <version>9.2.0</version>
+        </dependency>
+
+        <!-- JavaFX -->
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-controls</artifactId>
+            <version>21.0.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-fxml</artifactId>
+            <version>17.0.6</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-web</artifactId>
+            <version>17.0.6</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-swing</artifactId>
+            <version>17.0.6</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-media</artifactId>
+            <version>17.0.6</version>
+        </dependency>
+        <dependency>
+            <groupId>org.controlsfx</groupId>
+            <artifactId>controlsfx</artifactId>
+            <version>11.2.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.dlsc.formsfx</groupId>
+            <artifactId>formsfx-core</artifactId>
+            <version>11.6.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.openjfx</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>net.synedra</groupId>
+            <artifactId>validatorfx</artifactId>
+            <version>0.5.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.openjfx</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.kordamp.ikonli</groupId>
+            <artifactId>ikonli-javafx</artifactId>
+            <version>12.3.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.kordamp.bootstrapfx</groupId>
+            <artifactId>bootstrapfx-core</artifactId>
+            <version>0.4.0</version>
+        </dependency>
+        <dependency>
+            <groupId>eu.hansolo</groupId>
+            <artifactId>tilesfx</artifactId>
+            <version>21.0.3</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.openjfx</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.github.almasb</groupId>
+            <artifactId>fxgl</artifactId>
+            <version>17.3</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.openjfx</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.13.0</version>
+                <configuration>
+                    <source>24</source>
+                    <target>24</target>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.3.0</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <mainClass>core.Main</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.openjfx</groupId>
+                <artifactId>javafx-maven-plugin</artifactId>
+                <version>0.0.8</version>
+                <configuration>
+                    <mainClass>core.Main</mainClass>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>jpackage</id>
+                        <phase>package</phase>
+                        <configuration>
+                            <mainClass>core.Main</mainClass>
+                            <type>exe</type>
+                            <winConfig>
+                                <console>true</console>
+                                <shortcut>true</shortcut>
+                            </winConfig>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.6.0</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals><goal>shade</goal></goals>
+                        <configuration>
+                            <!-- Фильтры: исключаем всё лишнее -->
+                            <filters>
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <!-- Исключаем нативные библиотеки -->
+                                        <exclude>*/*.dll</exclude>
+                                        <exclude>*/*.so</exclude>
+                                        <exclude>*/*.dylib</exclude>
+
+                                        <!-- Исключаем META-INF сигнатуры -->
+                                        <exclude>META-INF/*.SF</exclude>
+                                        <exclude>META-INF/*.DSA</exclude>
+                                        <exclude>META-INF/*.RSA</exclude>
+
+                                        <!-- Исключаем ненужные папки из зависимостей -->
+                                        <exclude>native/**</exclude>
+                                        <exclude>com/sun/**</exclude>
+                                        <exclude>javafx_iio.dll</exclude>
+                                        <exclude>javafx_font.dll</exclude>
+                                        <exclude>glass.dll</exclude>
+                                        <exclude>jfxwebkit.dll</exclude>
+                                        <exclude>jfxmedia.dll</exclude>
+                                        <exclude>prism_*.dll</exclude>
+                                        <exclude>decora_sse.dll</exclude>
+                                        <exclude>glib-lite.dll</exclude>
+                                        <exclude>gstreamer-lite.dll</exclude>
+                                        <exclude>fxplugins.dll</exclude>
+                                        <exclude>vcruntime140.dll</exclude>
+                                        <exclude>ucrtbase.dll</exclude>
+                                        <exclude>msvcp140.dll</exclude>
+
+                                        <!-- Точечные исключения -->
+                                        <exclude>api-ms-win-core-console-l1-1-0.dll</exclude>
+                                        <exclude>api-ms-win-core-console-l1-2-0.dll</exclude>
+                                        <exclude>api-ms-win-core-datetime-l1-1-0.dll</exclude>
+                                        <exclude>api-ms-win-core-debug-l1-1-0.dll</exclude>
+                                        <exclude>api-ms-win-core-errorhandling-l1-1-0.dll</exclude>
+                                        <exclude>api-ms-win-core-file-l1-1-0.dll</exclude>
+                                        <exclude>api-ms-win-core-file-l1-2-0.dll</exclude>
+                                        <exclude>api-ms-win-core-file-l2-1-0.dll</exclude>
+                                        <exclude>api-ms-win-core-handle-l1-1-0.dll</exclude>
+                                        <exclude>api-ms-win-core-heap-l1-1-0.dll</exclude>
+                                        <exclude>api-ms-win-core-interlocked-l1-1-0.dll</exclude>
+                                        <exclude>api-ms-win-core-libraryloader-l1-1-0.dll</exclude>
+                                        <exclude>api-ms-win-core-localization-l1-2-0.dll</exclude>
+                                        <exclude>api-ms-win-core-memory-l1-1-0.dll</exclude>
+                                        <exclude>api-ms-win-core-namedpipe-l1-1-0.dll</exclude>
+                                        <exclude>api-ms-win-core-processenvironment-l1-1-0.dll</exclude>
+                                        <exclude>api-ms-win-core-processthreads-l1-1-0.dll</exclude>
+                                        <exclude>api-ms-win-core-processthreads-l1-1-1.dll</exclude>
+                                        <exclude>api-ms-win-core-profile-l1-1-0.dll</exclude>
+                                        <exclude>api-ms-win-core-rtlsupport-l1-1-0.dll</exclude>
+                                        <exclude>api-ms-win-core-string-l1-1-0.dll</exclude>
+                                        <exclude>api-ms-win-core-synch-l1-1-0.dll</exclude>
+                                        <exclude>api-ms-win-core-synch-l1-2-0.dll</exclude>
+                                        <exclude>api-ms-win-core-sysinfo-l1-1-0.dll</exclude>
+                                        <exclude>api-ms-win-core-timezone-l1-1-0.dll</exclude>
+                                        <exclude>api-ms-win-core-util-l1-1-0.dll</exclude>
+                                        <exclude>api-ms-win-crt-conio-l1-1-0.dll</exclude>
+                                        <exclude>api-ms-win-crt-convert-l1-1-0.dll</exclude>
+                                        <exclude>api-ms-win-crt-environment-l1-1-0.dll</exclude>
+                                        <exclude>api-ms-win-crt-filesystem-l1-1-0.dll</exclude>
+                                        <exclude>api-ms-win-crt-heap-l1-1-0.dll</exclude>
+                                        <exclude>api-ms-win-crt-locale-l1-1-0.dll</exclude>
+                                        <exclude>api-ms-win-crt-math-l1-1-0.dll</exclude>
+                                        <exclude>api-ms-win-crt-multibyte-l1-1-0.dll</exclude>
+                                        <exclude>api-ms-win-crt-private-l1-1-0.dll</exclude>
+                                        <exclude>api-ms-win-crt-process-l1-1-0.dll</exclude>
+                                        <exclude>api-ms-win-crt-runtime-l1-1-0.dll</exclude>
+                                        <exclude>api-ms-win-crt-stdio-l1-1-0.dll</exclude>
+                                        <exclude>api-ms-win-crt-string-l1-1-0.dll</exclude>
+                                        <exclude>api-ms-win-crt-time-l1-1-0.dll</exclude>
+                                        <exclude>api-ms-win-crt-utility-l1-1-0.dll</exclude>
+
+                                    </excludes>
+                                </filter>
+                            </filters>
+
+                            <!-- Указываем главный класс -->
+                            <transformers>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>core.Main</mainClass>
+                                </transformer>
+                            </transformers>
+
+                            <!-- Не перепаковываем уже собранный .jar -->
+                            <shadedArtifactAttached>false</shadedArtifactAttached>
+                            <shadedClassifierName>fat</shadedClassifierName> <!-- optional -->
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+        </plugins>
+    </build>
+</project>

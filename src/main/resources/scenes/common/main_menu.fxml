@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.geometry.Insets?>
+
+<?import javafx.scene.layout.Region?>
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="games.common.controllers.MainMenuController">
+
+    <padding>
+        <Insets top="20" bottom="20" left="20" right="20"/>
+    </padding>
+
+    <center>
+        <VBox alignment="CENTER" spacing="10" onKeyReleased="#onKeyReleased">
+            <Label text="The Game"/>
+            <Button text="Enter room" onAction="#onRoomSelectionButtonClick" prefWidth="150"/>
+            <Button text="Create room" onAction="#onRoomCreationButtonClick" prefWidth="150"/>
+
+            <Region prefHeight="10"/>
+
+            <Label fx:id="playerNameLabel" text="Your name: "/>
+            <TextField fx:id="textField" maxWidth="200"/>
+        </VBox>
+    </center>
+
+    <bottom>
+        <VBox alignment="CENTER" spacing="10">
+            <Button text="Exit" onAction="#onExitButton" prefWidth="60"/>
+        </VBox>
+    </bottom>
+
+</BorderPane>

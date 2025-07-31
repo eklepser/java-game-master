@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.Button?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.ScrollPane?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="games.common.controllers.RoomSelectionController">
+
+    <padding>
+        <Insets top="10" bottom="10" left="10" right="10"/>
+    </padding>
+
+    <center>
+
+        <VBox alignment="CENTER" spacing="5">
+        <Label> Available rooms: </Label>
+
+        <ScrollPane vbarPolicy="ALWAYS" hbarPolicy="NEVER" prefWidth="50" fitToWidth="true" VBox.vgrow="ALWAYS">
+
+            <padding>
+                <Insets top="10" bottom="10" left="10" right="10"/>
+            </padding>
+
+            <VBox fx:id="container">
+
+            </VBox>
+
+        </ScrollPane>
+        </VBox>
+    </center>
+
+    <bottom>
+        <VBox spacing="10" alignment="TOP_CENTER">
+
+            <padding>
+                <Insets top="10" bottom="10"/>
+            </padding>
+
+            <HBox spacing="10" alignment="CENTER">
+                <Button text="Back" onAction="#onBackButtonClick" prefWidth="50"/>
+                <Button text="Update" onAction="#onUpdateButtonClick" prefWidth="150"/>
+            </HBox>
+
+        </VBox>
+    </bottom>
+
+</BorderPane>
