@@ -1,14 +1,11 @@
 package games.tictactoe;
 
 import core.logic.Client;
-
 import javafx.scene.control.Button;
 import javafx.scene.text.Text;
-
 import java.util.HashMap;
 
-public class Tools {
-
+public class TictactoeUtils {
     static String getGameMap(Button[] gameFieldButtons) {
         StringBuilder gameMap = new StringBuilder();
         for (int i = 0; i < 9; i++) {
