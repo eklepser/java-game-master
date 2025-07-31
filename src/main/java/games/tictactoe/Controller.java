@@ -1,16 +1,10 @@
 package games.tictactoe;
 
 import core.logic.Client;
-import core.logic.GameState;
-import core.logic.Room;
 import core.network.FirebaseManager;
 import games.common.GameModel;
 import javafx.scene.layout.Region;
 import core.SceneManager;
-import games.common.callbacks.ChatUpdateCallback;
-import games.common.callbacks.ClientUpdateCallback;
-import games.common.callbacks.GameStateUpdateCallback;
-import games.common.callbacks.PlayersUpdateCallback;
 
 import core.network.FirebaseListener;
 import core.network.FirebaseReader;
