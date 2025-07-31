@@ -1,15 +1,13 @@
 package games.tictactoe;
 
-import core.logic.Client;
-import core.network.FirebaseManager;
-import games.common.GameModel;
-import javafx.scene.layout.Region;
 import core.SceneManager;
-
+import core.logic.Client;
+import core.logic.GameState;
+import core.logic.Room;
 import core.network.FirebaseListener;
+import core.network.FirebaseManager;
 import core.network.FirebaseReader;
 import core.network.FirebaseWriter;
-
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -22,32 +20,39 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Objects;
 
-public class Controller extends GameModel {
+public class Controller {
 
-    private boolean isReadyForGame = false;
-    private boolean isFirstInit = true;
-    private boolean isChatHistoryLoaded = false;
-    private Button[] gameFieldButtons = new Button[9];
+    @FXML public BorderPane root;
+    @FXML public ScrollPane chatScrollPane;
+    @FXML public Label roomInfoLabel;
+    @FXML public TextField messageField;
+    @FXML public VBox messageBox;
+    @FXML public VBox gameFieldBox;
+    @FXML public GridPane btnGrid;
+    @FXML public Region rg;
+    @FXML public Button readyButton;
+    @FXML public Label currentTurnLabel;
 
-    @FXML private BorderPane root;
-    @FXML private ScrollPane chatScrollPane;
-    @FXML private Label roomInfoLabel;
-    @FXML private TextField messageField;
-    @FXML private VBox messageBox;
-    @FXML private VBox gameFieldBox;
-    @FXML private GridPane btnGrid;
-    @FXML private Region rg;
-    @FXML private Button readyButton;
-    @FXML private Label currentTurnLabel;
+    public String roomId;
+    public Room currentRoom;
+    public GameState currentGameState;
+    public HashMap<String, HashMap<String, String>> playersInfo = new HashMap<>();
 
-    @Override
-    protected void extraInitialize() {
+    public boolean isReadyForGame = false;
+    public Button[] gameFieldButtons = new Button[9];
+
+    public void initialize() {
+        currentRoom = Client.CurrentRoom;
+        currentGameState = Client.CurrentGameState;
+        roomId = currentRoom.getRoomId();
+        NetworkListener network = new NetworkListener(this);
 
         readyButton = new Button();
         readyButton.setText("Ready");
@@ -68,100 +73,7 @@ public class Controller extends GameModel {
         });
     }
 
-    @Override
-    public void onPlayerAdded(HashMap<String, String> playerInfo) {
-        playersInfo.put(playerInfo.get("id"), playerInfo);
-        roomInfoLabelUpdate();
-    }
-
-    @Override
-    public void onPlayerRemoved(HashMap<String, String> playerInfo) {
-        playersInfo.remove(playerInfo.get("id"));
-        roomInfoLabelUpdate();
-    }
-
-    @Override
-    public void onPlayerInfoChanged(HashMap<String, String> playerInfo) {
-        playersInfo.put(playerInfo.get("id"), playerInfo);
-    }
-
-    @Override
-    public void onClientTeamChanged(String newTeam) {
-        currentTurnLabel.setText(Tools.getCurrentTurnText("0"));
-    }
-
-    @Override
-    public void onMessageAdded(String newMessage) {
-        Platform.runLater(() -> {
-            if (!isChatHistoryLoaded) {
-                isChatHistoryLoaded = true;
-                sendMessage(Client.getClientName() + " entered the room", true);
-            }
-            messageBox.getChildren().add(Tools.getMessageText(newMessage));
-        });
-    }
-
-    @Override
-    public void onGamePreparing() {
-        if (isFirstInit) {
-            isReadyForGame = false;
-            readyButton.setText("Ready");
-            root.setCenter(readyButton);
-            isFirstInit = false;
-        }
-    }
-
-    @Override
-    public void onGameStarted() {
-        root.getChildren().remove(readyButton);
-        currentGameState.setGameMap("---------");
-        updateGameField();
-        root.setCenter(gameFieldBox);
-    }
-
-    @Override
-    public void onGameFinished() {
-        if (isFirstInit) return;
-
-        FirebaseWriter.setPlayerIsReady(roomId, Client.getClientId(), false);
-
-        Button finishButton = new Button("New Game");
-        finishButton.setOnAction(event -> {
-            onFinishButton(finishButton);
-        });
-
-        gameFieldBox.getChildren().add(rg);
-        gameFieldBox.getChildren().add(finishButton);
-        currentTurnLabel.setText("Winner is " + Tools.getPlayerInfoByTurn(playersInfo, currentGameState.getTurn()).get("name"));
-
-        for (Button btn : gameFieldButtons) {
-            btn.setDisable(true);
-        }
-    }
-
-    @Override
-    public void onMapUpdated(String newMap) {
-        System.out.println(newMap);
-        currentGameState.setGameMap(newMap);
-        updateGameField();
-
-        if (Tools.isWinner(newMap)) {
-            FirebaseWriter.setGameGlobalState(roomId, "finished");
-        }
-
-        else if (Tools.isDraw(newMap)) {
-            FirebaseWriter.setGameGlobalState(roomId, "finished");
-        }
-    }
-
-    @Override
-    public void onNewTurn(String currentTurn) {
-        currentTurnLabel.setText(Tools.getCurrentTurnText( currentTurn));
-    }
-
     public void onExitButton(ActionEvent actionEvent) throws IOException {
-        String clientId = Client.getClientId();
-        FirebaseWriter.removeClientFromRoom(clientId, roomId);
 
         FirebaseListener.removeAllListeners();
         FirebaseManager.releaseClient();
@@ -200,7 +112,7 @@ public class Controller extends GameModel {
         }
     }
 
-    private void onGameFieldButton(Button btn) {
+    public void onGameFieldButton(Button btn) {
         if ((btn.getText().isBlank()) && Client.getClientTeam().equals(currentGameState.getTurn())) {
             if (Client.getClientTeam().equals("0")) btn.setText("x");
             else if (Client.getClientTeam().equals("1")) btn.setText("o");
@@ -210,7 +122,7 @@ public class Controller extends GameModel {
         }
     }
 
-    private void onFinishButton(Button btn) {
+    public void onFinishButton(Button btn) {
         gameFieldBox.getChildren().remove(btn);
         gameFieldBox.getChildren().remove(rg);
         root.getChildren().remove(gameFieldBox);
@@ -222,7 +134,7 @@ public class Controller extends GameModel {
         FirebaseWriter.setGameGlobalState(roomId, "preparing");
     }
 
-    private void updateGameField() {
+    public void updateGameField() {
         gameFieldBox.getChildren().remove(btnGrid);
         btnGrid.getChildren().clear();
         for (int i = 0; i < 3; i++) {
@@ -245,7 +157,7 @@ public class Controller extends GameModel {
         gameFieldBox.getChildren().add(btnGrid);
     }
 
-    private void roomInfoLabelUpdate() {
+    public void roomInfoLabelUpdate() {
         StringBuilder text = new StringBuilder();
         text.append("Room: ").append(currentRoom.getRoomInfo().get("name")).append("\n");
         text.append("Players: ");
@@ -255,7 +167,7 @@ public class Controller extends GameModel {
         Platform.runLater(() -> roomInfoLabel.setText(text.toString()));
     }
 
-    private void sendMessage(String message, boolean isServiceMessage) {
+    public void sendMessage(String message, boolean isServiceMessage) {
         String text;
         if (!isServiceMessage) {
             text = Client.getClientName() + ": " + message;
@@ -265,7 +177,7 @@ public class Controller extends GameModel {
         FirebaseWriter.addMessageToRoom(roomId, text);
     }
 
-    private void startGame() {
+    public void startGame() {
         FirebaseWriter.setRandomTeams(roomId, playersInfo);
         FirebaseWriter.setGameGlobalState(roomId, "playing");
         FirebaseWriter.setCurrentTurn(roomId, "0");
