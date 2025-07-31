@@ -140,9 +140,6 @@ public class Controller extends GameModel {
     }
 
     @Override
-    public void onGamePaused() { }
-
-    @Override
     public void onMapUpdated(String newMap) {
         System.out.println(newMap);
         currentGameState.setGameMap(newMap);
