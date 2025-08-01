@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.geometry.Insets?>
+
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="games.tictactoe.TictactoeController"
+            fx:id="root">
+
+    <padding>
+        <Insets top="20" bottom="20" left="20" right="20"/>
+    </padding>
+
+    <top>
+        <Label fx:id="roomInfoLabel"/>
+    </top>
+
+    <bottom>
+        <HBox alignment="BOTTOM_CENTER">
+
+        <VBox maxWidth="300">
+            <ScrollPane fx:id="chatScrollPane" prefHeight="180" fitToWidth="true">
+                <padding>
+                    <Insets top="4" bottom="4" left="4" right="4"/>
+                </padding>
+
+                <VBox fx:id="messageBox" spacing="4" alignment="BASELINE_LEFT">
+                    <padding>
+                        <Insets top="5" bottom="5" left="5" right="5"/>
+                    </padding>
+                </VBox>
+            </ScrollPane>
+
+            <HBox onKeyReleased="#onKeyReleased">
+                <TextField fx:id="messageField" prefWidth="240"/>
+                <Button text="->" onAction="#onSendMessageButton" prefWidth="60"/>
+            </HBox>
+        </VBox>
+
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button text="Exit" onAction="#onExitButton" prefWidth="60"/>
+
+        </HBox>
+    </bottom>
+
+</BorderPane>

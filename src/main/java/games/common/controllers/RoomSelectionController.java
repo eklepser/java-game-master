@@ -1,13 +1,18 @@
 package games.common.controllers;
 
 import core.SceneManager;
+import core.logic.Client;
 import core.network.FirebaseListener;
 import core.network.FirebaseManager;
 import games.common.callbacks.RoomListUpdateCallback;
-import javafx.geometry.HPos;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.control.Label;
-import javafx.scene.layout.*;
+import javafx.scene.control.TextField;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
 import javafx.fxml.FXML;
@@ -17,11 +22,12 @@ import java.util.Objects;
 
 public class RoomSelectionController implements RoomListUpdateCallback {
     private final HashMap<String, HashMap<String, String>> roomsInfo = new HashMap<>();
+    private final HashMap<String, String> searchFilters = new HashMap<>();
 
     @FXML private VBox container;
+    @FXML private TextField searchTextField;
 
     public void initialize() {
-        //onUpdateButtonClick();
         FirebaseListener.addRoomListListener(this);
     }
 
@@ -47,34 +53,21 @@ public class RoomSelectionController implements RoomListUpdateCallback {
     }
 
     private void makeRoomButtons() {
+        updateSearchFilters();
         container.getChildren().clear();
         for (String roomId : roomsInfo.keySet()) {
             HashMap<String, String> roomInfo = roomsInfo.get(roomId);
+            if (!RoomSelectionUtils.isMatchingFilters(roomInfo, searchFilters)) continue;
 
-            GridPane gp = new GridPane();
-            ColumnConstraints col1 = new ColumnConstraints();
-            col1.setHalignment(HPos.LEFT);
-            col1.setPercentWidth(20);
-            col1.setHgrow(Priority.NEVER);
-            ColumnConstraints col2 = new ColumnConstraints();
-            col2.setHalignment(HPos.CENTER);
-            col2.setHgrow(Priority.ALWAYS);
-            ColumnConstraints col3 = new ColumnConstraints();
-            col3.setHalignment(HPos.RIGHT);
-            col3.setPercentWidth(20);
-            col3.setHgrow(Priority.NEVER);
-            gp.getColumnConstraints().addAll(col1, col2, col3);
-
+            BorderPane bp = new BorderPane();
             String playersCount = roomInfo.get("playersCount");
             String size = roomInfo.get("size");
-            gp.add(new Label(playersCount + "/" + size), 0, 1);
 
-            gp.add(new Label(roomInfo.get("name") + "\ntictactoe"), 1, 1);
-            gp.add(new Label(getRoomInfoIcons(roomInfo)), 2, 1);
-            gp.setMaxWidth(Double.MAX_VALUE);
+            bp.setLeft(new Label(" " + roomInfo.get("gameMode") + " " + roomInfo.get("name")));
+            bp.setRight(new Label(playersCount + "/" + size + " " + getRoomInfoIcons(roomInfo)));
 
             Button btn = new Button();
-            btn.setGraphic(gp);
+            btn.setGraphic(bp);
             btn.setContentDisplay(ContentDisplay.LEFT);
             btn.setMaxWidth(1000);
             btn.setOnAction((_) -> {
@@ -109,11 +102,27 @@ public class RoomSelectionController implements RoomListUpdateCallback {
         SceneManager.loadScene("common/main_menu.fxml");
     }
 
+    public void onKeyReleased() {
+        updateSearchFilters();
+        makeRoomButtons();
+    }
+
     private String getRoomInfoIcons(HashMap<String, String> roomInfo) {
         StringBuilder icons = new StringBuilder();
         String password = roomInfo.get("password");
         if ((password != null) && !password.isBlank()) icons.append("\uD83D\uDD12");
         if (Objects.equals(roomInfo.get("allowToWatch"), "true")) icons.append("\uD83D\uDC41");
         return icons.toString();
+    }
+
+    private void updateSearchFilters() {
+        searchFilters.put("fname", searchTextField.getText());
+        System.out.println("Filters updated: " + searchFilters);
+    }
+
+    public void onResetButton() {
+        searchTextField.clear();
+        searchFilters.clear();
+        makeRoomButtons();
     }
 }

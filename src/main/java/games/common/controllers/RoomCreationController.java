@@ -3,7 +3,6 @@ package games.common.controllers;
 import core.SceneManager;
 import core.network.FirebaseManager;
 import core.network.FirebaseWriter;
-import core.network.FirebaseListener;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
@@ -23,8 +22,8 @@ public class RoomCreationController {
     @FXML
     protected void onCreateButtonClick() {
         roomInfo.put("name", nameTextField.getText());
-        String gameModeFXML = getGameModeFXML(gameModeComboBox.getValue());
-        roomInfo.put("gameMode", gameModeFXML);
+        String gameMode = gameModeComboBox.getValue();
+        roomInfo.put("gameMode", gameMode);
         String password = passwordTextField.getText().isEmpty() ? "" :  passwordTextField.getText();
         roomInfo.put("password", password);
         roomInfo.put("allowToWatch", String.valueOf(allowToWatchCheckBox.isSelected()));
@@ -35,8 +34,7 @@ public class RoomCreationController {
 
         Platform.runLater(() -> {
             try {
-                SceneManager.loadScene("games/" + gameModeFXML + ".fxml");
-                //FirebaseListener.removeRoomListListener();
+                SceneManager.loadScene("games/" + getGameModeFXML(gameMode) + ".fxml");
             }
             catch (IOException e) {
                 throw new RuntimeException(e);
@@ -53,6 +51,7 @@ public class RoomCreationController {
         return switch (gameModeName) {
             case "Tictactoe classic" -> "tictactoe_classic";
             case "Tictactoe advanced" -> "tictactoe_advanced";
+            case "Chat game" -> "chat_game";
             default -> "";
         };
     }

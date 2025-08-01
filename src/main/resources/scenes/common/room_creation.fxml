@@ -41,6 +41,7 @@
                     <items>
                         <FXCollections fx:factory="observableArrayList">
                             <String fx:value="Tictactoe classic"/>
+                            <String fx:value="Chat game"/>
                         </FXCollections>
                     </items>
                 </ComboBox>
