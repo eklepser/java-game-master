@@ -1,6 +1,8 @@
 package games.tictactoe;
 
 
+import core.logic.Client;
+import core.network.FirebaseWriter;
 import games.common.GameModel;
 import javafx.scene.control.Button;
 
@@ -14,5 +16,21 @@ public class TictactoeModel extends GameModel {
     public TictactoeModel() {
         isReadyForGame = false;
         gameFieldButtons = new Button[9];
+    }
+
+    public void startGame() {
+        FirebaseWriter.setRandomTeams(roomId, playersInfo);
+        FirebaseWriter.setGameGlobalState(roomId, "playing");
+        FirebaseWriter.setCurrentTurn(roomId, "0");
+        sendMessage("Game started", true);
+    }
+
+    public void sendMessage(String message, boolean isServiceMessage) {
+        String text;
+        if (!isServiceMessage) {
+            text = Client.getClientName() + ": " + message;
+        }
+        else text = "!!!" + message;
+        FirebaseWriter.addMessageToRoom(roomId, text);
     }
 }

@@ -11,13 +11,13 @@ import java.util.HashMap;
 public class TictactoeNetworkListener extends GameNetworkListener {
     private TictactoeModel model;
     private TictactoeController controller;
+
     private boolean isFirstInit = true;
     private boolean isChatHistoryLoaded = false;
 
     public TictactoeNetworkListener(TictactoeController controller, TictactoeModel model) {
         this.model = model;
         this.controller = controller;
-
         FirebaseListener.addPlayersListener(model.roomId, this);
         FirebaseListener.addChatListener(model.roomId, this);
         FirebaseListener.addGameStateListener(model.roomId, this);
@@ -27,13 +27,13 @@ public class TictactoeNetworkListener extends GameNetworkListener {
     @Override
     public void onPlayerAdded(HashMap<String, String> playerInfo) {
         model.playersInfo.put(playerInfo.get("id"), playerInfo);
-        controller.roomInfoLabelUpdate();
+        controller.updateRoomInfoLabel();
     }
 
     @Override
     public void onPlayerRemoved(HashMap<String, String> playerInfo) {
         model.playersInfo.remove(playerInfo.get("id"));
-        controller.roomInfoLabelUpdate();
+        controller.updateRoomInfoLabel();
     }
 
     @Override
@@ -43,7 +43,7 @@ public class TictactoeNetworkListener extends GameNetworkListener {
 
     @Override
     public void onClientTeamChanged(String newTeam) {
-        controller.currentTurnLabel.setText(TictactoeUtils.getCurrentTurnText("0"));
+        controller.updateCurrentTurnLabel(TictactoeUtils.getCurrentTurnText("0"));
     }
 
     @Override
@@ -51,28 +51,26 @@ public class TictactoeNetworkListener extends GameNetworkListener {
         Platform.runLater(() -> {
             if (!isChatHistoryLoaded) {
                 isChatHistoryLoaded = true;
-                controller.sendMessage(Client.getClientName() + " entered the room", true);
+                model.sendMessage(Client.getClientName() + " entered the room", true);
             }
-            controller.messageBox.getChildren().add(TictactoeUtils.getMessageText(newMessage));
+            controller.updateMessageBox(TictactoeUtils.getMessageText(newMessage));
         });
     }
 
     @Override
     public void onGamePreparing() {
         if (isFirstInit) {
-            model.isReadyForGame = false;
-            controller.readyButton.setText("Ready");
-            controller.root.setCenter(controller.readyButton);
+            controller.setReadyButton(false);
             isFirstInit = false;
         }
     }
 
     @Override
     public void onGameStarted() {
-        controller.root.getChildren().remove(controller.readyButton);
+        controller.removeReadyButton();
         model.currentGameState.setGameMap("---------");
         controller.updateGameField();
-        controller.root.setCenter(controller.gameFieldBox);
+        controller.setGameFieldBox();
     }
 
     @Override
@@ -81,14 +79,9 @@ public class TictactoeNetworkListener extends GameNetworkListener {
 
         FirebaseWriter.setPlayerIsReady(model.roomId, Client.getClientId(), false);
 
-        Button finishButton = new Button("New Game");
-        finishButton.setOnAction(event -> {
-            controller.onFinishButton(finishButton);
-        });
-
-        controller.gameFieldBox.getChildren().add(controller.rg);
-        controller.gameFieldBox.getChildren().add(finishButton);
-        controller.currentTurnLabel.setText("Winner is " + TictactoeUtils.getPlayerInfoByTurn(model.playersInfo, model.currentGameState.getTurn()).get("name"));
+        controller.setFinishButton();
+        String winnerName = TictactoeUtils.getPlayerInfoByTurn(model.playersInfo, model.currentGameState.getTurn()).get("name");
+        controller.updateCurrentTurnLabel("Winner is " + winnerName);
 
         for (Button btn : model.gameFieldButtons) {
             btn.setDisable(true);
@@ -112,6 +105,7 @@ public class TictactoeNetworkListener extends GameNetworkListener {
 
     @Override
     public void onNewTurn(String currentTurn) {
-        controller.currentTurnLabel.setText(TictactoeUtils.getCurrentTurnText( currentTurn));
+        String message = TictactoeUtils.getCurrentTurnText(currentTurn);
+        controller.updateCurrentTurnLabel(message);
     }
 }

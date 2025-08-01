@@ -180,22 +180,16 @@
                         <phase>package</phase>
                         <goals><goal>shade</goal></goals>
                         <configuration>
-                            <!-- Фильтры: исключаем всё лишнее -->
                             <filters>
                                 <filter>
                                     <artifact>*:*</artifact>
                                     <excludes>
-                                        <!-- Исключаем нативные библиотеки -->
                                         <exclude>*/*.dll</exclude>
                                         <exclude>*/*.so</exclude>
                                         <exclude>*/*.dylib</exclude>
-
-                                        <!-- Исключаем META-INF сигнатуры -->
                                         <exclude>META-INF/*.SF</exclude>
                                         <exclude>META-INF/*.DSA</exclude>
                                         <exclude>META-INF/*.RSA</exclude>
-
-                                        <!-- Исключаем ненужные папки из зависимостей -->
                                         <exclude>native/**</exclude>
                                         <exclude>com/sun/**</exclude>
                                         <exclude>javafx_iio.dll</exclude>
@@ -211,8 +205,6 @@
                                         <exclude>vcruntime140.dll</exclude>
                                         <exclude>ucrtbase.dll</exclude>
                                         <exclude>msvcp140.dll</exclude>
-
-                                        <!-- Точечные исключения -->
                                         <exclude>api-ms-win-core-console-l1-1-0.dll</exclude>
                                         <exclude>api-ms-win-core-console-l1-2-0.dll</exclude>
                                         <exclude>api-ms-win-core-datetime-l1-1-0.dll</exclude>
@@ -254,21 +246,18 @@
                                         <exclude>api-ms-win-crt-string-l1-1-0.dll</exclude>
                                         <exclude>api-ms-win-crt-time-l1-1-0.dll</exclude>
                                         <exclude>api-ms-win-crt-utility-l1-1-0.dll</exclude>
-
                                     </excludes>
                                 </filter>
                             </filters>
 
-                            <!-- Указываем главный класс -->
                             <transformers>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <mainClass>core.Main</mainClass>
                                 </transformer>
                             </transformers>
 
-                            <!-- Не перепаковываем уже собранный .jar -->
                             <shadedArtifactAttached>false</shadedArtifactAttached>
-                            <shadedClassifierName>fat</shadedClassifierName> <!-- optional -->
+                            <shadedClassifierName>fat</shadedClassifierName>
                         </configuration>
                     </execution>
                 </executions>

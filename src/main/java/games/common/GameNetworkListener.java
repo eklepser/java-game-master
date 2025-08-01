@@ -1,9 +1,5 @@
 package games.common;
 
-import core.logic.Client;
-import core.logic.GameState;
-import core.logic.Room;
-import core.network.FirebaseListener;
 import games.common.callbacks.*;
 import java.util.HashMap;
 

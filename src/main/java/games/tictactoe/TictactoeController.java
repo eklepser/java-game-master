@@ -2,8 +2,6 @@ package games.tictactoe;
 
 import core.SceneManager;
 import core.logic.Client;
-import core.logic.GameState;
-import core.logic.Room;
 import core.network.FirebaseListener;
 import core.network.FirebaseManager;
 import core.network.FirebaseReader;
@@ -23,24 +21,27 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Objects;
 
 public class TictactoeController extends GameController {
-    TictactoeModel model;
-    TictactoeNetworkListener network;
+    private TictactoeModel model;
+    private TictactoeNetworkListener network;
 
-    @FXML public BorderPane root;
-    @FXML public ScrollPane chatScrollPane;
-    @FXML public Label roomInfoLabel;
-    @FXML public TextField messageField;
-    @FXML public VBox messageBox;
-    @FXML public VBox gameFieldBox;
-    @FXML public GridPane btnGrid;
-    @FXML public Region rg;
-    @FXML public Button readyButton;
-    @FXML public Label currentTurnLabel;
+    @FXML private BorderPane root;
+    @FXML private ScrollPane chatScrollPane;
+    @FXML private Label roomInfoLabel;
+    @FXML private TextField messageField;
+    @FXML private VBox messageBox;
+    @FXML private VBox gameFieldBox;
+    @FXML private GridPane btnGrid;
+    @FXML private Region rg;
+    @FXML private Button readyButton;
+    @FXML private Button finishButton;
+    @FXML private Label currentTurnLabel;
 
     @Override
     protected void extraInitialize() {
@@ -54,6 +55,10 @@ public class TictactoeController extends GameController {
         readyButton.setText("Ready");
         readyButton.setPrefWidth(60);
         readyButton.setOnAction(this::onReadyButton);
+        finishButton = new Button("New Game");
+
+        finishButton.setOnAction((actionEvent) -> onFinishButton(finishButton));
+
         gameFieldBox = new VBox();
         gameFieldBox.setAlignment(Pos.CENTER);
         currentTurnLabel = new Label();
@@ -71,17 +76,21 @@ public class TictactoeController extends GameController {
         FirebaseListener.removeAllListeners();
         FirebaseManager.releaseClient();
 
-        sendMessage(Client.getClientName() + " left the room", true);
+        model.sendMessage(Client.getClientName() + " left the room", true);
 
         SceneManager.loadScene("common/room_selection.fxml");
     }
 
     public void onSendMessageButton(ActionEvent actionEvent) {
-        sendMessage(messageField.getText(), false);
+        model.sendMessage(messageField.getText(), false);
+        messageField.clear();
     }
 
     public void onKeyReleased(KeyEvent keyEvent) {
-        if (keyEvent.getCode() == KeyCode.ENTER) sendMessage(messageField.getText(), false);
+        if (keyEvent.getCode() == KeyCode.ENTER) {
+            model.sendMessage(messageField.getText(), false);
+            messageField.clear();
+        }
     }
 
     public void onReadyButton(ActionEvent actionEvent) {
@@ -90,19 +99,31 @@ public class TictactoeController extends GameController {
             FirebaseWriter.setPlayerIsReady(model.roomId, Client.getClientId(), true);
             FirebaseReader.getPlayersReadyAmount(model.roomId).thenAccept(playersReady -> {
                 String maxSize = model.currentRoom.getRoomInfo().get("size");
-                sendMessage(TictactoeUtils.getReadyMessage(String.valueOf(playersReady), maxSize), true);
+                String message = TictactoeUtils.getReadyMessage(String.valueOf(playersReady), maxSize);
+                model.sendMessage(message, true);
                 boolean isAllPlayersReady = Objects.equals(String.valueOf(playersReady), maxSize);
                 if (isAllPlayersReady) {
-                    startGame();
+                    model.startGame();
                 }
             });
             readyButton.setText("Cancel");
         }
         else {
             FirebaseWriter.setPlayerIsReady(model.roomId, Client.getClientId(), false);
-            sendMessage(Client.getClientName() + " is not ready", true);
+            model.sendMessage(Client.getClientName() + " is not ready", true);
             readyButton.setText("Ready");
         }
+    }
+
+    public void setReadyButton(Boolean isReady) {
+        model.isReadyForGame = isReady;
+        if (isReady) readyButton.setText("Cancel");
+        else readyButton.setText("Ready");
+        root.setCenter(readyButton);
+    }
+
+    public void removeReadyButton() {
+        root.getChildren().remove(readyButton);
     }
 
     public void onGameFieldButton(Button btn) {
@@ -125,6 +146,11 @@ public class TictactoeController extends GameController {
         root.setCenter(readyButton);
 
         FirebaseWriter.setGameGlobalState(model.roomId, "preparing");
+    }
+
+    public void setFinishButton() {
+        gameFieldBox.getChildren().add(rg);
+        gameFieldBox.getChildren().add(finishButton);
     }
 
     public void updateGameField() {
@@ -150,7 +176,11 @@ public class TictactoeController extends GameController {
         gameFieldBox.getChildren().add(btnGrid);
     }
 
-    public void roomInfoLabelUpdate() {
+    public void setGameFieldBox() {
+        root.setCenter(gameFieldBox);
+    }
+
+    public void updateRoomInfoLabel() {
         StringBuilder text = new StringBuilder();
         text.append("Room: ").append(model.currentRoom.getRoomInfo().get("name")).append("\n");
         text.append("Players: ");
@@ -160,21 +190,11 @@ public class TictactoeController extends GameController {
         Platform.runLater(() -> roomInfoLabel.setText(text.toString()));
     }
 
-    public void sendMessage(String message, boolean isServiceMessage) {
-        String text;
-        if (!isServiceMessage) {
-            text = Client.getClientName() + ": " + message;
-            messageField.clear();
-        }
-        else text = "!!!" + message;
-        FirebaseWriter.addMessageToRoom(model.roomId, text);
+    public void updateCurrentTurnLabel(String newMessage) {
+        currentTurnLabel.setText(newMessage);
     }
 
-    public void startGame() {
-        FirebaseWriter.setRandomTeams(model.roomId, model.playersInfo);
-        FirebaseWriter.setGameGlobalState(model.roomId, "playing");
-        FirebaseWriter.setCurrentTurn(model.roomId, "0");
-        sendMessage("Game started", true);
+    public void updateMessageBox(Text newMessageText) {
+        messageBox.getChildren().add(newMessageText);
     }
-
 }
