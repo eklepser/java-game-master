@@ -72,15 +72,6 @@ public class TictactoeController extends GameController {
             });
         }
 
-    public void onExitButton(ActionEvent actionEvent) throws IOException {
-        FirebaseListener.removeAllListeners();
-        FirebaseManager.releaseClient();
-
-        model.sendMessage(Client.getClientName() + " left the room", true);
-
-        SceneManager.loadScene("common/room_selection.fxml");
-    }
-
     public void onSendMessageButton(ActionEvent actionEvent) {
         model.sendMessage(messageField.getText(), false);
         messageField.clear();
@@ -151,6 +142,16 @@ public class TictactoeController extends GameController {
     public void setFinishButton() {
         gameFieldBox.getChildren().add(rg);
         gameFieldBox.getChildren().add(finishButton);
+    }
+
+    public void onExitButton(ActionEvent actionEvent) throws IOException {
+        FirebaseListener.removeAllListeners();
+        FirebaseWriter.removeClientFromRoom(Client.getClientId(), model.roomId);
+        FirebaseManager.releaseClient();
+
+        model.sendMessage(Client.getClientName() + " left the room", true);
+
+        SceneManager.loadScene("common/room_selection.fxml");
     }
 
     public void updateGameField() {

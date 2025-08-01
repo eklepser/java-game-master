@@ -51,7 +51,11 @@ public class RoomSelectionController {
             col3.setPercentWidth(20);
             col3.setHgrow(Priority.NEVER);
             gp.getColumnConstraints().addAll(col1, col2, col3);
-            gp.add(new Label("1/2"), 0, 1);
+
+            String playersCount = roomInfo.get("playersCount");
+            String size = roomInfo.get("size");
+            gp.add(new Label(playersCount + "/" + size), 0, 1);
+
             gp.add(new Label(roomInfo.get("name") + "\ntictactoe"), 1, 1);
             gp.add(new Label(getRoomInfoIcons(roomInfo)), 2, 1);
             gp.setMaxWidth(Double.MAX_VALUE);
