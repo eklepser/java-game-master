@@ -1,38 +1,52 @@
 package games.common.controllers;
 
+import core.SceneManager;
+import core.network.FirebaseListener;
+import core.network.FirebaseManager;
+import games.common.callbacks.RoomListUpdateCallback;
 import javafx.geometry.HPos;
+import javafx.application.Platform;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
-import core.SceneManager;
-import core.network.FirebaseManager;
-import core.network.FirebaseReader;
-
-import javafx.application.Platform;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
 import javafx.fxml.FXML;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Objects;
 
-public class RoomSelectionController {
-    @FXML
-    private VBox container;
+public class RoomSelectionController implements RoomListUpdateCallback {
+    private final HashMap<String, HashMap<String, String>> roomsInfo = new HashMap<>();
 
-    public void initialize() throws IOException {
-        onUpdateButtonClick();
+    @FXML private VBox container;
+
+    public void initialize() {
+        //onUpdateButtonClick();
+        FirebaseListener.addRoomListListener(this);
     }
 
-    @FXML
-    protected void onUpdateButtonClick() throws IOException {
-        FirebaseReader.getAllRoomsInfo().thenAccept(roomsInfo -> {
-            Platform.runLater(() -> makeRoomButtons(roomsInfo));
-        });
-        System.out.println("room list updated");
+    @Override
+    public void onRoomAdded(HashMap<String, String> roomInfo) {
+        roomsInfo.put(roomInfo.get("id"), roomInfo);
+        makeRoomButtons();
+        System.out.println("NEW ROOM ADDED");
     }
 
-    private void makeRoomButtons(HashMap<String, HashMap<String, String>> roomsInfo) {
+    @Override
+    public void onRoomRemoved(HashMap<String, String> roomInfo) {
+        roomsInfo.remove(roomInfo.get("id"));
+        makeRoomButtons();
+        System.out.println("ROOM REMOVED");
+    }
+
+    @Override
+    public void onRoomChanged(HashMap<String, String> roomInfo) {
+        roomsInfo.put(roomInfo.get("id"), roomInfo);
+        makeRoomButtons();
+        System.out.println("ROOM CHANGED");
+    }
+
+    private void makeRoomButtons() {
         container.getChildren().clear();
         for (String roomId : roomsInfo.keySet()) {
             HashMap<String, String> roomInfo = roomsInfo.get(roomId);
@@ -44,7 +58,6 @@ public class RoomSelectionController {
             col1.setHgrow(Priority.NEVER);
             ColumnConstraints col2 = new ColumnConstraints();
             col2.setHalignment(HPos.CENTER);
-
             col2.setHgrow(Priority.ALWAYS);
             ColumnConstraints col3 = new ColumnConstraints();
             col3.setHalignment(HPos.RIGHT);
@@ -64,7 +77,7 @@ public class RoomSelectionController {
             btn.setGraphic(gp);
             btn.setContentDisplay(ContentDisplay.LEFT);
             btn.setMaxWidth(1000);
-            btn.setOnAction(event -> {
+            btn.setOnAction((_) -> {
                 try {
                     onRoomButtonClick(roomId);
                 }
@@ -77,12 +90,13 @@ public class RoomSelectionController {
     }
 
     @FXML
-    protected void onRoomButtonClick(String roomId) throws IOException {
+    private void onRoomButtonClick(String roomId) throws IOException {
         FirebaseManager.attachClient(roomId);
         Platform.runLater(() -> {
             try {
                 SceneManager.loadScene("games/tictactoe_classic.fxml");
                 System.out.println("Client added to room " + roomId);
+                FirebaseListener.removeRoomListListener();
             }
             catch (IOException e) {
                 throw new RuntimeException(e);
@@ -91,14 +105,14 @@ public class RoomSelectionController {
     }
 
     @FXML
-    protected void onBackButtonClick() throws IOException {
+    private void onBackButtonClick() throws IOException {
         SceneManager.loadScene("common/main_menu.fxml");
     }
 
     private String getRoomInfoIcons(HashMap<String, String> roomInfo) {
-        System.out.println(roomInfo);
         StringBuilder icons = new StringBuilder();
-        if (!roomInfo.get("password").isBlank()) icons.append("\uD83D\uDD12");
+        String password = roomInfo.get("password");
+        if ((password != null) && !password.isBlank()) icons.append("\uD83D\uDD12");
         if (Objects.equals(roomInfo.get("allowToWatch"), "true")) icons.append("\uD83D\uDC41");
         return icons.toString();
     }

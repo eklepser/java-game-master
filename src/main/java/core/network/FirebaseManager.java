@@ -8,7 +8,6 @@ import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.database.FirebaseDatabase;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.net.URISyntaxException;
@@ -33,8 +32,7 @@ public class FirebaseManager {
             FirebaseTools.roomsRef = FirebaseTools.firebase.getReference("rooms");
         }
         catch (Exception e) {
-            System.err.println("Firebase initializing error:");
-            e.printStackTrace();
+            System.err.println("Firebase initializing error");
         }
     }
 

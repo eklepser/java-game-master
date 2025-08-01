@@ -45,7 +45,6 @@
 
             <HBox spacing="10" alignment="CENTER">
                 <Button text="Back" onAction="#onBackButtonClick" prefWidth="50"/>
-                <Button text="Update" onAction="#onUpdateButtonClick" prefWidth="150"/>
             </HBox>
 
         </VBox>

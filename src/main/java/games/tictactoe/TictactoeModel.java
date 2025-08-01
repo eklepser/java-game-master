@@ -1,11 +1,9 @@
 package games.tictactoe;
 
-
 import core.logic.Client;
 import core.network.FirebaseWriter;
 import games.common.GameModel;
 import javafx.scene.control.Button;
-
 import java.util.HashMap;
 
 public class TictactoeModel extends GameModel {

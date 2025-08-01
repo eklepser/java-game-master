@@ -2,7 +2,6 @@ package games.common.controllers;
 
 import core.logic.Client;
 import core.SceneManager;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
@@ -44,7 +43,7 @@ public class MainMenuController {
         }
     }
 
-    public void onExitButton(ActionEvent actionEvent) {
+    public void onExitButton() {
         SceneManager.exit();
     }
 }

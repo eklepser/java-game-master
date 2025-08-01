@@ -29,7 +29,7 @@ public class SceneManager {
 
     private static void setupPrimaryStage() {
         primaryStage.setResizable(false);
-        primaryStage.setOnCloseRequest(event -> {
+        primaryStage.setOnCloseRequest((_) -> {
             String roomId = Client.CurrentRoom.getRoomId();
             String clientId = Client.getClientId();
             if ((clientId != null) && (roomId != null)) FirebaseWriter.removeClientFromRoom(clientId, roomId);

@@ -1,10 +1,7 @@
 package core.network;
 
 import core.logic.Client;
-import games.common.callbacks.ChatUpdateCallback;
-import games.common.callbacks.ClientUpdateCallback;
-import games.common.callbacks.GameStateUpdateCallback;
-import games.common.callbacks.PlayersUpdateCallback;
+import games.common.callbacks.*;
 
 import com.google.firebase.database.*;
 
@@ -14,17 +11,14 @@ import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class FirebaseListener {
-    private static HashMap<String, ChildEventListener> childEventListeners = new HashMap<>();
-    private static HashMap<String, ValueEventListener> valueEventListeners = new HashMap<>();
+    private static final HashMap<String, ChildEventListener> childEventListeners = new HashMap<>();
+    private static final HashMap<String, ValueEventListener> valueEventListeners = new HashMap<>();
 
     private static DatabaseReference chatRef;
-
     private static DatabaseReference clientTeamRef;
-
     private static DatabaseReference globalGameStateRef;
     private static DatabaseReference gameMapRef;
     private static DatabaseReference currentTurnRef;
-
     private static DatabaseReference playersRef;
 
     public static void addChatListener(String roomId, ChatUpdateCallback callback) {
@@ -33,9 +27,7 @@ public class FirebaseListener {
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 String newMessage = dataSnapshot.getValue(String.class);
                 System.out.println("NEW MSG: " + newMessage);
-                Platform.runLater(() -> {
-                    callback.onMessageAdded(newMessage);
-                });
+                Platform.runLater(() -> callback.onMessageAdded(newMessage));
             }
 
             @Override public void onChildChanged(DataSnapshot dataSnapshot, String s) { }
@@ -56,9 +48,7 @@ public class FirebaseListener {
                 String newTeam = dataSnapshot.getValue(String.class);
                 if (newTeam == null) return;
                 Client.setClientTeam(newTeam);
-                Platform.runLater(() -> {
-                    callback.onClientTeamChanged(newTeam);
-                });
+                Platform.runLater(() -> callback.onClientTeamChanged(newTeam));
             }
 
             @Override public void onCancelled(DatabaseError databaseError) { }
@@ -78,24 +68,16 @@ public class FirebaseListener {
                     Client.CurrentGameState.setGlobalState(globalGameState);
                     switch (globalGameState) {
                         case "preparing":
-                            Platform.runLater(() -> {
-                                callback.onGamePreparing();
-                            });
+                            Platform.runLater(callback::onGamePreparing);
                             break;
                         case "playing":
-                            Platform.runLater(() -> {
-                                callback.onGameStarted();
-                            });
+                            Platform.runLater(callback::onGameStarted);
                             break;
                         case "finished":
-                            Platform.runLater(() -> {
-                                callback.onGameFinished();
-                            });
+                            Platform.runLater(callback::onGameFinished);
                             break;
                         case "paused":
-                            Platform.runLater(() -> {
-                                callback.onGamePaused();
-                            });
+                            Platform.runLater(callback::onGamePaused);
                             break;
                     }
                 });
@@ -125,8 +107,7 @@ public class FirebaseListener {
                     callback.onNewTurn(newTurn);
                 });
             }
-            @Override
-            public void onCancelled(DatabaseError databaseError) { }
+            @Override public void onCancelled(DatabaseError databaseError) { }
         };
 
         globalGameStateRef = FirebaseTools.getGameStateRefByRoomId(roomId).child("globalState");
@@ -172,16 +153,13 @@ public class FirebaseListener {
             @Override public void onCancelled(DatabaseError databaseError) { }
 
             private HashMap<String, String> getPlayerInfo(DataSnapshot ds) {
-                HashMap<String, String> playerInfo = new HashMap<>();
-                String id = ds.getKey();
-                playerInfo.put("id", id);
-                String playerName = (String) ds.child("name").getValue();
-                playerInfo.put("name", playerName);
-                Boolean isReady = ds.child("isReady").getValue(Boolean.class);
-                playerInfo.put("isReady", String.valueOf(isReady));
-                String playerTeam = (String) ds.child("team").getValue();
-                playerInfo.put("team", playerTeam);
-                return playerInfo;
+                return new HashMap<>() {{
+                    put("id", ds.getKey());
+                    put("name", (String) ds.child("name").getValue());
+                    Boolean isReady = ds.child("isReady").getValue(Boolean.class);
+                    put("isReady", String.valueOf(isReady));
+                    put("team", (String) ds.child("team").getValue());
+                }};
             }
         };
 
@@ -190,15 +168,62 @@ public class FirebaseListener {
         childEventListeners.put("playersListener", playersListener);
     }
 
+    public static void addRoomListListener(RoomListUpdateCallback callback) {
+        ChildEventListener roomListListener = new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                Platform.runLater(() -> {
+                    HashMap<String, String> roomInfo = getRoomInfo(dataSnapshot);
+                    callback.onRoomAdded(roomInfo);
+                    System.out.println(roomInfo);
+                });
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                Platform.runLater(() -> {
+                    HashMap<String, String> roomInfo = getRoomInfo(dataSnapshot);
+                    callback.onRoomRemoved(roomInfo);
+                });
+            }
+
+            @Override public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                Platform.runLater(() -> {
+                    HashMap<String, String> roomInfo = getRoomInfo(dataSnapshot);
+                    callback.onRoomChanged(roomInfo);
+                });
+            }
+
+            @Override public void onChildMoved(DataSnapshot dataSnapshot, String s) { }
+            @Override public void onCancelled(DatabaseError databaseError) { }
+
+            private HashMap<String, String> getRoomInfo(DataSnapshot ds) {
+                return new HashMap<>() {{
+                    put("id", ds.getKey());
+                    put("name", (String) ds.child("info/name").getValue());
+                    put("gameMode", (String) ds.child("info/gameMode").getValue());
+                    put("password", (String) ds.child("info/password").getValue());
+                    put("allowToWatch", (String) ds.child("info/allowToWatch").getValue());
+                    put("size", (String) ds.child("info/size").getValue());
+                    put("playersCount", String.valueOf(ds.child("players").getChildrenCount()));
+                }};
+            }
+        };
+
+        FirebaseTools.roomsRef.addChildEventListener(roomListListener);
+        childEventListeners.put("roomListListener", roomListListener);
+    }
+
+    public static void removeRoomListListener() {
+        FirebaseTools.roomsRef.removeEventListener(childEventListeners.get("roomListListener"));
+    }
+
     public static void removeAllListeners() {
         chatRef.removeEventListener(childEventListeners.get("chatListener"));
-
         clientTeamRef.removeEventListener(valueEventListeners.get("clientTeamListener"));
-
         currentTurnRef.removeEventListener(valueEventListeners.get("currentTurnListener"));
         globalGameStateRef.removeEventListener(valueEventListeners.get("globalGameStateListener"));
         gameMapRef.removeEventListener(valueEventListeners.get("gameMapListener"));
-
         playersRef.removeEventListener(childEventListeners.get("playersListener"));
     }
 }

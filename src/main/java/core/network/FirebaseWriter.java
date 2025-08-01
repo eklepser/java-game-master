@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Random;
 
 public class FirebaseWriter {
-    private static Random random = new Random();
+    private static final Random random = new Random();
 
     public static String addRoom(HashMap<String, String> roomInfo) {
        return addRoom(roomInfo, "2");
@@ -41,11 +41,10 @@ public class FirebaseWriter {
         return newPlayerRef.getKey(); //returning newClientId
     }
 
-    public static String addMessageToRoom(String roomId, String message) {
+    public static void addMessageToRoom(String roomId, String message) {
         DatabaseReference chatRef = FirebaseTools.getChatRefByRoomId(roomId);
         DatabaseReference newMessageRef = chatRef.push();
         newMessageRef.setValueAsync(message);
-        return newMessageRef.getKey(); //returning messageId
     }
 
     public static void setGameMap(String roomId, String newGameMap) {

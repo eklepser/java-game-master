@@ -42,9 +42,7 @@ public class TictactoeUtils {
     }
 
     static boolean isWinner(String gameMap) {
-        char mark;
-        if (Client.getClientTeam().equals("0")) mark = 'x';
-        else mark = 'o';
+        char mark = (Client.getClientTeam().equals("0")) ? 'x' : 'o';
 
         for (int i = 0; i < 9; i += 3) {
             if (gameMap.charAt(i) == mark &&
@@ -53,7 +51,6 @@ public class TictactoeUtils {
                 return true;
             }
         }
-
         for (int i = 0; i < 3; i++) {
             if (gameMap.charAt(i) == mark &&
                     gameMap.charAt(i + 3) == mark &&

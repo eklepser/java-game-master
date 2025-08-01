@@ -22,14 +22,12 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Objects;
 
 public class TictactoeController extends GameController {
     private TictactoeModel model;
-    private TictactoeNetworkListener network;
 
     @FXML private BorderPane root;
     @FXML private ScrollPane chatScrollPane;
@@ -46,7 +44,7 @@ public class TictactoeController extends GameController {
     @Override
     protected void extraInitialize() {
         model = new TictactoeModel();
-        network = new TictactoeNetworkListener(this, model);
+        TictactoeNetworkListener network = new TictactoeNetworkListener(model, this);
     }
 
     @Override
@@ -57,7 +55,7 @@ public class TictactoeController extends GameController {
         readyButton.setOnAction(this::onReadyButton);
         finishButton = new Button("New Game");
 
-        finishButton.setOnAction((actionEvent) -> onFinishButton(finishButton));
+        finishButton.setOnAction((_) -> onFinishButton(finishButton));
 
         gameFieldBox = new VBox();
         gameFieldBox.setAlignment(Pos.CENTER);
@@ -67,12 +65,10 @@ public class TictactoeController extends GameController {
         gameFieldBox.getChildren().add(currentTurnLabel);
         rg = new Region();
         rg.setPrefHeight(20);
-        messageBox.heightProperty().addListener((obs, oldVal, newVal) -> {
-            chatScrollPane.setVvalue(1.0);
-            });
+        messageBox.heightProperty().addListener((_, _, _) -> chatScrollPane.setVvalue(1.0));
         }
 
-    public void onSendMessageButton(ActionEvent actionEvent) {
+    public void onSendMessageButton() {
         model.sendMessage(messageField.getText(), false);
         messageField.clear();
     }
@@ -144,7 +140,7 @@ public class TictactoeController extends GameController {
         gameFieldBox.getChildren().add(finishButton);
     }
 
-    public void onExitButton(ActionEvent actionEvent) throws IOException {
+    public void onExitButton() throws IOException {
         FirebaseListener.removeAllListeners();
         FirebaseWriter.removeClientFromRoom(Client.getClientId(), model.roomId);
         FirebaseManager.releaseClient();
@@ -167,9 +163,8 @@ public class TictactoeController extends GameController {
                     btn.setText("o");
                 }
                 btn.setPrefSize(60, 60);
-                btn.setOnAction(event -> {
-                    onGameFieldButton(btn);
-                });
+                btn.setOnAction((_) -> onGameFieldButton(btn));
+
                 model.gameFieldButtons[3 * i + j] = btn;
                 btnGrid.add(btn, i, j);
             }

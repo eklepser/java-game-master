@@ -3,7 +3,7 @@ package core.logic;
 public class GameState {
     private String globalState;
     private String currentTurn;
-    private String gameMap = "---------";
+    private String gameMap;
 
     public GameState() {
         globalState = "";

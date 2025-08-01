@@ -15,7 +15,7 @@ public class TictactoeNetworkListener extends GameNetworkListener {
     private boolean isFirstInit = true;
     private boolean isChatHistoryLoaded = false;
 
-    public TictactoeNetworkListener(TictactoeController controller, TictactoeModel model) {
+    public TictactoeNetworkListener(TictactoeModel model, TictactoeController controller) {
         this.model = model;
         this.controller = controller;
         FirebaseListener.addPlayersListener(model.roomId, this);

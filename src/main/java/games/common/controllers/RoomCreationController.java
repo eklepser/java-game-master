@@ -1,18 +1,19 @@
 package games.common.controllers;
 
-import javafx.scene.control.*;
 import core.SceneManager;
 import core.network.FirebaseManager;
 import core.network.FirebaseWriter;
-
+import core.network.FirebaseListener;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.TextField;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-
 import java.io.IOException;
 import java.util.HashMap;
 
 public class RoomCreationController {
-    private HashMap<String, String> roomInfo = new HashMap<>();
+    private final HashMap<String, String> roomInfo = new HashMap<>();
 
     @FXML private TextField nameTextField = new TextField();
     @FXML private TextField passwordTextField = new TextField();
@@ -20,11 +21,12 @@ public class RoomCreationController {
     @FXML private CheckBox allowToWatchCheckBox;
 
     @FXML
-    protected void onCreateButtonClick() throws IOException {
+    protected void onCreateButtonClick() {
         roomInfo.put("name", nameTextField.getText());
         String gameModeFXML = getGameModeFXML(gameModeComboBox.getValue());
         roomInfo.put("gameMode", gameModeFXML);
-        roomInfo.put("password", passwordTextField.getText());
+        String password = passwordTextField.getText().isEmpty() ? "" :  passwordTextField.getText();
+        roomInfo.put("password", password);
         roomInfo.put("allowToWatch", String.valueOf(allowToWatchCheckBox.isSelected()));
 
         String roomId = FirebaseWriter.addRoom(roomInfo);
@@ -34,6 +36,7 @@ public class RoomCreationController {
         Platform.runLater(() -> {
             try {
                 SceneManager.loadScene("games/" + gameModeFXML + ".fxml");
+                //FirebaseListener.removeRoomListListener();
             }
             catch (IOException e) {
                 throw new RuntimeException(e);
@@ -47,10 +50,10 @@ public class RoomCreationController {
     }
 
     private String getGameModeFXML(String gameModeName) {
-        switch (gameModeName) {
-            case "Tictactoe classic": return "tictactoe_classic";
-            case "Tictactoe advanced": return "tictactoe_advanced";
-            default: return "";
-        }
+        return switch (gameModeName) {
+            case "Tictactoe classic" -> "tictactoe_classic";
+            case "Tictactoe advanced" -> "tictactoe_advanced";
+            default -> "";
+        };
     }
 }
