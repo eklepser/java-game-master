@@ -1,4 +1,4 @@
-package games.common.controllers;
+package controller.menus.room_selection;
 
 import java.util.HashMap;
 

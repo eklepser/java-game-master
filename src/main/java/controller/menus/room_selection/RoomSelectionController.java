@@ -1,14 +1,10 @@
-package games.common.controllers;
+package controller.menus.room_selection;
 
 import core.SceneManager;
-import core.logic.Client;
 import core.network.FirebaseListener;
 import core.network.FirebaseManager;
-import games.common.callbacks.RoomListUpdateCallback;
+import controller.common.callbacks.RoomListUpdateCallback;
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.control.Label;
@@ -99,7 +95,7 @@ public class RoomSelectionController implements RoomListUpdateCallback {
 
     @FXML
     private void onBackButtonClick() throws IOException {
-        SceneManager.loadScene("common/main_menu.fxml");
+        SceneManager.loadScene("menus/main_menu.fxml");
     }
 
     public void onKeyReleased() {

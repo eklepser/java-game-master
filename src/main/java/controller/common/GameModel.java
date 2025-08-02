@@ -1,4 +1,4 @@
-package games.common;
+package controller.common;
 
 import core.logic.Client;
 import core.logic.GameState;

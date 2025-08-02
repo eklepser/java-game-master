@@ -1,7 +1,7 @@
 package core.network;
 
 import core.logic.Client;
-import games.common.callbacks.*;
+import controller.common.callbacks.*;
 
 import com.google.firebase.database.*;
 

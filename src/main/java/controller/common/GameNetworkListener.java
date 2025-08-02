@@ -1,6 +1,6 @@
-package games.common;
+package controller.common;
 
-import games.common.callbacks.*;
+import controller.common.callbacks.*;
 import java.util.HashMap;
 
 public abstract class GameNetworkListener implements

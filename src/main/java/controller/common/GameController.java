@@ -1,4 +1,4 @@
-package games.common;
+package controller.common;
 
 public abstract class GameController {
     public void initialize() {

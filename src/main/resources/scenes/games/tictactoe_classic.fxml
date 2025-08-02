@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.Region?>
 
 <BorderPane xmlns:fx="http://javafx.com/fxml"
-            fx:controller="games.tictactoe.TictactoeController"
+            fx:controller="controller.games.tictactoe_classic.TictactoeController"
             fx:id="root">
 
     <padding>

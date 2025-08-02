@@ -18,16 +18,20 @@ module org.example.javava {
 
     exports core.network;
     opens core.network to javafx.fxml;
-    exports games.tictactoe;
-    opens games.tictactoe to javafx.fxml;
+    exports controller.games.tictactoe_classic;
+    opens controller.games.tictactoe_classic to javafx.fxml;
     opens core to javafx.fxml;
     exports core;
-    exports games.common.callbacks;
-    opens games.common.callbacks to javafx.fxml;
-    exports games.common.controllers;
-    opens games.common.controllers to javafx.fxml;
+    exports controller.common.callbacks;
+    opens controller.common.callbacks to javafx.fxml;
     exports core.logic;
     opens core.logic to javafx.fxml;
-    opens games.common to javafx.fxml;
-    exports games.common;
+    opens controller.common to javafx.fxml;
+    exports controller.common;
+    exports controller.menus.main_menu;
+    opens controller.menus.main_menu to javafx.fxml;
+    exports controller.menus.room_creation;
+    opens controller.menus.room_creation to javafx.fxml;
+    exports controller.menus.room_selection;
+    opens controller.menus.room_selection to javafx.fxml;
 }

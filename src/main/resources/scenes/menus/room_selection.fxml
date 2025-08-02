@@ -15,7 +15,7 @@
 <?import javafx.collections.FXCollections?>
 <?import java.lang.String?>
 <BorderPane xmlns:fx="http://javafx.com/fxml"
-            fx:controller="games.common.controllers.RoomSelectionController">
+            fx:controller="controller.menus.room_selection.RoomSelectionController">
 
     <padding>
         <Insets top="10" bottom="10" left="10" right="10"/>
@@ -29,12 +29,12 @@
                 <Label text="Search room:"/>
                 <TextField fx:id="searchTextField" onKeyReleased="#onKeyReleased"/>
                 <ComboBox fx:id="gameModeComboBox"
-                              value="All games"
+                              value="All controller"
                               maxWidth="200"
                               HBox.hgrow="NEVER">
                         <items>
                             <FXCollections fx:factory="observableArrayList">
-                                <String fx:value="All games"/>
+                                <String fx:value="All controller"/>
                                 <String fx:value="Tic Tac Toe classic"/>
                                 <String fx:value="Chat game"/>
                             </FXCollections>

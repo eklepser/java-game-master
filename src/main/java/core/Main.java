@@ -11,7 +11,7 @@ public class Main extends Application {
     public void start(Stage stage) throws IOException, URISyntaxException {
         FirebaseManager.init();
         SceneManager.init(stage);
-        SceneManager.loadScene("common/main_menu.fxml");
+        SceneManager.loadScene("menus/main_menu.fxml");
     }
 
     public static void main(String[] args) {

@@ -1,4 +1,4 @@
-package games.tictactoe;
+package controller.games.tictactoe_classic;
 
 import core.logic.Client;
 import javafx.scene.control.Button;

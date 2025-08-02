@@ -1,4 +1,4 @@
-package games.common.controllers;
+package controller.menus.main_menu;
 
 import core.logic.Client;
 import core.SceneManager;
@@ -22,12 +22,12 @@ public class MainMenuController {
 
     @FXML
     protected void onRoomCreationButtonClick() throws IOException {
-        SceneManager.loadScene("common/room_creation.fxml");
+        SceneManager.loadScene("menus/room_creation.fxml");
     }
 
     @FXML
     protected void onRoomSelectionButtonClick() throws IOException {
-        SceneManager.loadScene("common/room_selection.fxml");
+        SceneManager.loadScene("menus/room_selection.fxml");
     }
 
     public void onKeyReleased(KeyEvent keyEvent) {

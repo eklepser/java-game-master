@@ -1,4 +1,4 @@
-package games.tictactoe;
+package controller.games.tictactoe_classic;
 
 import core.SceneManager;
 import core.logic.Client;
@@ -6,7 +6,7 @@ import core.network.FirebaseListener;
 import core.network.FirebaseManager;
 import core.network.FirebaseReader;
 import core.network.FirebaseWriter;
-import games.common.GameController;
+import controller.common.GameController;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -147,7 +147,7 @@ public class TictactoeController extends GameController {
 
         model.sendMessage(Client.getClientName() + " left the room", true);
 
-        SceneManager.loadScene("common/room_selection.fxml");
+        SceneManager.loadScene("menus/room_selection.fxml");
     }
 
     public void updateGameField() {

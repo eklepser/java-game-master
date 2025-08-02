@@ -1,9 +1,9 @@
-package games.tictactoe;
+package controller.games.tictactoe_classic;
 
 import core.logic.Client;
 import core.network.FirebaseListener;
 import core.network.FirebaseWriter;
-import games.common.GameNetworkListener;
+import controller.common.GameNetworkListener;
 import javafx.application.Platform;
 import javafx.scene.control.Button;
 import java.util.HashMap;

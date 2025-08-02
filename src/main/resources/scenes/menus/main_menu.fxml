@@ -9,7 +9,7 @@
 
 <?import javafx.scene.layout.Region?>
 <BorderPane xmlns:fx="http://javafx.com/fxml"
-            fx:controller="games.common.controllers.MainMenuController">
+            fx:controller="controller.menus.main_menu.MainMenuController">
 
     <padding>
         <Insets top="20" bottom="20" left="20" right="20"/>

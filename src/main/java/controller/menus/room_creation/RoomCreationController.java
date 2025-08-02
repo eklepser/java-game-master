@@ -1,4 +1,4 @@
-package games.common.controllers;
+package controller.menus.room_creation;
 
 import core.SceneManager;
 import core.network.FirebaseManager;
@@ -34,7 +34,7 @@ public class RoomCreationController {
 
         Platform.runLater(() -> {
             try {
-                SceneManager.loadScene("games/" + getGameModeFXML(gameMode) + ".fxml");
+                SceneManager.loadScene("controller/" + getGameModeFXML(gameMode) + ".fxml");
             }
             catch (IOException e) {
                 throw new RuntimeException(e);
@@ -44,7 +44,7 @@ public class RoomCreationController {
 
     @FXML
     protected void onBackButtonClick() throws IOException {
-        SceneManager.loadScene("common/main_menu.fxml");
+        SceneManager.loadScene("menus/main_menu.fxml");
     }
 
     private String getGameModeFXML(String gameModeName) {

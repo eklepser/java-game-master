@@ -1,4 +1,4 @@
-package games.common.callbacks;
+package controller.common.callbacks;
 
 import java.util.HashMap;
 
