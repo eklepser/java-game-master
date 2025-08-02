@@ -49,8 +49,7 @@ public class RoomCreationController {
 
     private String getGameModeFXML(String gameModeName) {
         return switch (gameModeName) {
-            case "Tictactoe classic" -> "tictactoe_classic";
-            case "Tictactoe advanced" -> "tictactoe_advanced";
+            case "Tic-tac-toe Classic" -> "tictactoe_classic";
             case "Chat game" -> "chat_game";
             default -> "";
         };

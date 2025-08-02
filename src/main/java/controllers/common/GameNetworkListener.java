@@ -19,7 +19,7 @@ public abstract class GameNetworkListener implements
     public void onGameStarted() { }
 
     @Override
-    public void onGameFinished() { }
+    public void onGameFinished(boolean isDraw) { }
 
     @Override
     public void onGamePaused() { }

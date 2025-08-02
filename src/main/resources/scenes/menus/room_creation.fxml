@@ -10,7 +10,6 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.collections.FXCollections?>
 <?import java.lang.String?>
-<?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.layout.Region?>
 
 <?import javafx.scene.control.CheckBox?>
@@ -35,12 +34,12 @@
                 <Label text="Choose game mode:" style="-fx-padding: 0 10 0 0;" HBox.hgrow="NEVER"/>
                 <Region HBox.hgrow="ALWAYS"/>
                 <ComboBox fx:id="gameModeComboBox"
-                          value="Tictactoe classic"
+                          value="Tic-tac-toe Classic"
                           maxWidth="200"
                           HBox.hgrow="NEVER">
                     <items>
                         <FXCollections fx:factory="observableArrayList">
-                            <String fx:value="Tictactoe classic"/>
+                            <String fx:value="Tic-tac-toe Classic"/>
                             <String fx:value="Chat game"/>
                         </FXCollections>
                     </items>
@@ -56,7 +55,7 @@
             <HBox spacing="10" maxWidth="500" prefWidth="500">
                 <Label text="Allow to watch:" style="-fx-padding: 0 10 0 0;" HBox.hgrow="NEVER"/>
                 <Region HBox.hgrow="ALWAYS"/>
-                <CheckBox fx:id="allowToWatchCheckBox" HBox.hgrow="NEVER" selected="true"/>
+                <CheckBox fx:id="allowToWatchCheckBox" HBox.hgrow="NEVER" selected="true" disable="true"/>
             </HBox>
 
             <HBox spacing="10" alignment="CENTER">

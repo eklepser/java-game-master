@@ -33,7 +33,7 @@ public class TictactoeModel extends GameModel {
 
     public void setReadyStatus(Boolean isReady) { isReadyForGame = isReady; }
 
-    public Boolean getReadyStatus() { return isReadyForGame; }
+    public boolean getReadyStatus() { return isReadyForGame; }
 
     public void switchReadyStatus() { isReadyForGame = !isReadyForGame; }
 
@@ -41,6 +41,22 @@ public class TictactoeModel extends GameModel {
 
     public void disableGameFieldButtons() {
         for (Button btn : gameFieldButtons) { btn.setDisable(true); }
+    }
+
+    public String getCurrentTurn() {
+        return currentGameState.getTurn();
+    }
+
+    public boolean isCurrentTurnClient() {
+        return Client.getClientTeam().equals(getCurrentTurn());
+    }
+
+    public String getPreviousTurn() {
+        return TictactoeUtils.getOpponentTeam(currentGameState.getTurn());
+    }
+
+    public boolean isPreviousTurnClient() {
+        return Client.getClientTeam().equals(getPreviousTurn());
     }
 
     public void startGame() {

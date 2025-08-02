@@ -5,17 +5,18 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.ScrollPane?>
-
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
-
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.collections.FXCollections?>
 <?import java.lang.String?>
+<?import javafx.scene.control.ToggleButton?>
+
 <BorderPane xmlns:fx="http://javafx.com/fxml"
-            fx:controller="controllers.menus.room_selection.RoomSelectionController">
+            fx:controller="controllers.menus.room_selection.RoomSelectionController"
+            onKeyPressed="#onKeyPressed">
 
     <padding>
         <Insets top="10" bottom="10" left="10" right="10"/>
@@ -23,24 +24,28 @@
 
     <center>
         <VBox alignment="CENTER" spacing="5">
-            <Label text="Room selecting"/>
+            <Label text="Room selecting" style="-fx-font-size: 16px;"/>
             <Region prefHeight="5"/>
-            <HBox alignment="BASELINE_LEFT" spacing="5">
+            <HBox fx:id="searchFiltersBox" alignment="BASELINE_LEFT" spacing="5">
                 <Label text="Search room:"/>
-                <TextField fx:id="searchTextField" onKeyReleased="#onKeyReleased"/>
+                <TextField fx:id="searchTextField" onKeyTyped="#updateRoomButtons"/>
                 <ComboBox fx:id="gameModeComboBox"
-                              value="All controllers"
+                              value="All games"
                               maxWidth="200"
-                              HBox.hgrow="NEVER">
+                              HBox.hgrow="NEVER"
+                              onAction="#updateRoomButtons">
                         <items>
                             <FXCollections fx:factory="observableArrayList">
-                                <String fx:value="All controllers"/>
-                                <String fx:value="Tic Tac Toe classic"/>
+                                <String fx:value="All games"/>
+                                <String fx:value="Tic-tac-toe Classic"/>
                                 <String fx:value="Chat game"/>
                             </FXCollections>
                         </items>
                 </ComboBox>
-                <Button text="Reset" onAction="#onResetButton"/>
+                <ToggleButton fx:id="showLockedRoomsButton" text="🔒" onAction="#updateRoomButtons" selected="true"/>
+                <ToggleButton fx:id="showFullRoomsButton" text="⛔" onAction="#updateRoomButtons"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button text="Reset" onAction="#onResetButton" prefWidth="100"/>
             </HBox>
             <Region prefHeight="5"/>
             <ScrollPane vbarPolicy="ALWAYS" hbarPolicy="NEVER" prefWidth="50" fitToWidth="true" VBox.vgrow="ALWAYS">
@@ -48,7 +53,7 @@
                     <Insets top="10" bottom="10" left="10" right="10"/>
                 </padding>
 
-                <VBox fx:id="container">
+                <VBox fx:id="roomListBox" spacing="5">
 
                 </VBox>
 

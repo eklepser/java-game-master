@@ -28,6 +28,7 @@ import java.util.Objects;
 
 public class TictactoeController extends GameController {
     private TictactoeModel model;
+    TictactoeNetworkListener network;
 
     @FXML private BorderPane root;
     @FXML private ScrollPane chatScrollPane;
@@ -44,7 +45,7 @@ public class TictactoeController extends GameController {
     @Override
     protected void extraInitialize() {
         model = new TictactoeModel();
-        TictactoeNetworkListener network = new TictactoeNetworkListener(model, this);
+        network = new TictactoeNetworkListener(model, this);
     }
 
     @Override
@@ -114,7 +115,7 @@ public class TictactoeController extends GameController {
     }
 
     public void onGameFieldButton(Button btn) {
-        if ((btn.getText().isBlank()) && Client.getClientTeam().equals(model.currentGameState.getTurn())) {
+        if ((btn.getText().isBlank()) && model.isCurrentTurnClient()) {
             if (Client.getClientTeam().equals("0")) btn.setText("x");
             else if (Client.getClientTeam().equals("1")) btn.setText("o");
             String opponentTeam = TictactoeUtils.getOpponentTeam(Client.getClientTeam());

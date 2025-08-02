@@ -74,13 +74,16 @@ public class TictactoeNetworkListener extends GameNetworkListener {
     }
 
     @Override
-    public void onGameFinished() {
+    public void onGameFinished(boolean isDraw) {
         if (isFirstInit) return;
         FirebaseWriter.setPlayerIsReady(model.roomId, Client.getClientId(), false);
         controller.setFinishButton();
-        String winnerName = model.getCurrentPlayerInfo().get("name");
-        controller.updateCurrentTurnLabel("Winner is " + winnerName);
         model.disableGameFieldButtons();
+
+        String finishMessage;
+        if (isDraw) finishMessage = "Game finished with a draw";
+        else finishMessage = "Winner is " + model.getCurrentPlayerInfo().get("name");
+        controller.updateCurrentTurnLabel(finishMessage);
     }
 
     @Override
@@ -89,12 +92,13 @@ public class TictactoeNetworkListener extends GameNetworkListener {
         model.currentGameState.setGameMap(newMap);
         controller.updateGameField();
 
-        if (TictactoeUtils.isWinner(newMap)) {
-            FirebaseWriter.setGameGlobalState(model.roomId, "finished");
-        }
-
-        else if (TictactoeUtils.isDraw(newMap)) {
-            FirebaseWriter.setGameGlobalState(model.roomId, "finished");
+        if (model.isPreviousTurnClient()) {
+            if (TictactoeUtils.isWinner(newMap)) {
+                FirebaseWriter.setGameGlobalState(model.roomId, "finished");
+            }
+            else if (TictactoeUtils.isDraw(newMap)) {
+                FirebaseWriter.setGameGlobalState(model.roomId, "finished with draw");
+            }
         }
     }
 

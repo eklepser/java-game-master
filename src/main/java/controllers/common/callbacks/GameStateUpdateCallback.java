@@ -3,7 +3,7 @@ package controllers.common.callbacks;
 public interface GameStateUpdateCallback {
     void onGamePreparing();
     void onGameStarted();
-    void onGameFinished();
+    void onGameFinished(boolean isDraw);
     void onGamePaused();
 
     void onMapUpdated(String newMap);

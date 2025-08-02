@@ -17,21 +17,21 @@ public class RoomSelectionNetworkListener implements RoomListUpdateCallback {
     @Override
     public void onRoomAdded(HashMap<String, String> roomInfo) {
         model.putRoomInfo(roomInfo);
-        controller.makeRoomButtons();
+        controller.updateRoomButtons();
         System.out.println("NEW ROOM ADDED");
     }
 
     @Override
     public void onRoomRemoved(HashMap<String, String> roomInfo) {
         model.removeRoomInfo(roomInfo.get("id"));
-        controller.makeRoomButtons();
+        controller.updateRoomButtons();
         System.out.println("ROOM REMOVED");
     }
 
     @Override
     public void onRoomChanged(HashMap<String, String> roomInfo) {
         model.putRoomInfo(roomInfo);
-        controller.makeRoomButtons();
+        controller.updateRoomButtons();
         System.out.println("ROOM CHANGED");
     }
 }

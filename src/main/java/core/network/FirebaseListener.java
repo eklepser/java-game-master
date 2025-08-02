@@ -74,7 +74,12 @@ public class FirebaseListener {
                             Platform.runLater(callback::onGameStarted);
                             break;
                         case "finished":
-                            Platform.runLater(callback::onGameFinished);
+                            Platform.runLater(() -> callback.onGameFinished(false));
+                            System.out.println("game finished");
+                            break;
+                        case "finished with draw":
+                            System.out.println("game finished with draw");
+                            Platform.runLater(() -> callback.onGameFinished(true));
                             break;
                         case "paused":
                             Platform.runLater(callback::onGamePaused);

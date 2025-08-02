@@ -1,58 +1,81 @@
 package controllers.menus.room_selection;
 
 import core.SceneManager;
+import core.logic.Client;
 import core.network.FirebaseListener;
 import core.network.FirebaseManager;
 import javafx.application.Platform;
+import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
-import javafx.scene.control.Button;
-import javafx.scene.control.ContentDisplay;
 import javafx.fxml.FXML;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
+
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Objects;
 
 public class RoomSelectionController  {
     private RoomSelectionModel model;
+    private RoomSelectionNetworkListener network;
+    private final HashMap<String, String> searchFilters = new HashMap<>();
 
-    @FXML private VBox container;
+    @FXML private VBox roomListBox;
+    @FXML private HBox searchFiltersBox;
     @FXML private TextField searchTextField;
+    @FXML private ComboBox<String> gameModeComboBox;
+    @FXML private ToggleButton showLockedRoomsButton;
+    @FXML private ToggleButton showFullRoomsButton;
 
     public void initialize() {
         model = new RoomSelectionModel();
-        RoomSelectionNetworkListener network = new RoomSelectionNetworkListener(model, this);
+        network = new RoomSelectionNetworkListener(model, this);
     }
 
-    public void makeRoomButtons() {
-        model.updateSearchFilters(searchTextField.getText());
-        container.getChildren().clear();
+    private void updateSearchFilters() {
+        searchFilters.put("f_name", searchTextField.getText());
+        searchFilters.put("f_mode", gameModeComboBox.getValue());
+        searchFilters.put("f_locked", String.valueOf(showLockedRoomsButton.isSelected()));
+        searchFilters.put("f_full", String.valueOf(showFullRoomsButton.isSelected()));
+
+        System.out.println("Filters updated: " + searchFilters);
+    }
+
+    private boolean isMatchingFilters(HashMap<String, String> roomInfo) {
+        String fNameCorrected = searchFilters.get("f_name").toLowerCase().replaceAll("\\s", "");;
+        String nameCorrected = roomInfo.get("name").toLowerCase().replaceAll("\\s", "");;
+        boolean isMatching = (nameCorrected.startsWith(fNameCorrected));
+
+        String fMode = searchFilters.get("f_mode");
+        if (!fMode.equals("All games")) isMatching = isMatching && (roomInfo.get("gameMode").equals(fMode));
+
+        String fLocked = searchFilters.get("f_locked");
+        if (fLocked.equals("false")) isMatching = isMatching && (roomInfo.get("password").isEmpty());
+
+        String fFull = searchFilters.get("f_full");
+        if (fFull.equals("false")) isMatching = isMatching && !(roomInfo.get("size").equals(roomInfo.get("playersCount")));
+
+        return isMatching;
+    }
+
+    public void updateRoomButtons() {
+        updateSearchFilters();
+        roomListBox.getChildren().clear();
         for (String roomId : model.getRoomsInfo().keySet()) {
             HashMap<String, String> roomInfo = model.getRoomsInfo().get(roomId);
-            if (!model.isMatchingFilters(roomInfo)) continue;
-
-            BorderPane bp = new BorderPane();
-            String playersCount = roomInfo.get("playersCount");
-            String size = roomInfo.get("size");
-
-            bp.setLeft(new Label(" " + roomInfo.get("gameMode") + " " + roomInfo.get("name")));
-            bp.setRight(new Label(playersCount + "/" + size + " " + getRoomInfoIcons(roomInfo)));
+            if (!isMatchingFilters(roomInfo)) continue;
 
             Button btn = new Button();
-            btn.setGraphic(bp);
-            btn.setContentDisplay(ContentDisplay.LEFT);
-            btn.setMaxWidth(1000);
+            btn.setGraphic(RoomSelectionUtils.getRoomButtonGraphics(roomInfo));
+            btn.setMaxWidth(Double.MAX_VALUE);
             btn.setOnAction((_) -> {
-                try {
-                    onRoomButtonClick(roomId);
-                }
-                catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
+                try { onRoomButtonClick(roomId); }
+                catch (IOException e) {throw new RuntimeException(e); }
             });
-            container.getChildren().add(btn);
+            roomListBox.getChildren().add(btn);
         }
     }
 
@@ -62,7 +85,6 @@ public class RoomSelectionController  {
         Platform.runLater(() -> {
             try {
                 SceneManager.loadScene("games/tictactoe_classic.fxml");
-                System.out.println("Client added to room " + roomId);
                 FirebaseListener.removeRoomListListener();
             }
             catch (IOException e) {
@@ -71,27 +93,26 @@ public class RoomSelectionController  {
         });
     }
 
+    public void onResetButton() {
+        searchTextField.clear();
+        gameModeComboBox.setValue("All games");
+        showLockedRoomsButton.setSelected(true);
+        showFullRoomsButton.setSelected(false);
+
+        searchFilters.clear();
+        updateRoomButtons();
+    }
+
     @FXML
     private void onBackButtonClick() throws IOException {
         SceneManager.loadScene("menus/main_menu.fxml");
+        FirebaseListener.removeRoomListListener();
     }
 
-    public void onKeyReleased() {
-        model.updateSearchFilters(searchTextField.getText());
-        makeRoomButtons();
-    }
-
-    private String getRoomInfoIcons(HashMap<String, String> roomInfo) {
-        StringBuilder icons = new StringBuilder();
-        String password = roomInfo.get("password");
-        if ((password != null) && !password.isBlank()) icons.append("\uD83D\uDD12");
-        if (Objects.equals(roomInfo.get("allowToWatch"), "true")) icons.append("\uD83D\uDC41");
-        return icons.toString();
-    }
-
-    public void onResetButton() {
-        searchTextField.clear();
-        model.clearSearchFilters();
-        makeRoomButtons();
+    public void onKeyPressed(KeyEvent keyEvent) throws IOException {
+        if (keyEvent.getCode() == KeyCode.ESCAPE) {
+            SceneManager.loadScene("menus/main_menu.fxml");
+            FirebaseListener.removeRoomListListener();
+        }
     }
 }
