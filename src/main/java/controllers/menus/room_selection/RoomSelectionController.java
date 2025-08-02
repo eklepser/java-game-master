@@ -1,9 +1,8 @@
-package controller.menus.room_selection;
+package controllers.menus.room_selection;
 
 import core.SceneManager;
 import core.network.FirebaseListener;
 import core.network.FirebaseManager;
-import controller.common.callbacks.RoomListUpdateCallback;
 import javafx.application.Platform;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
@@ -16,44 +15,23 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Objects;
 
-public class RoomSelectionController implements RoomListUpdateCallback {
-    private final HashMap<String, HashMap<String, String>> roomsInfo = new HashMap<>();
-    private final HashMap<String, String> searchFilters = new HashMap<>();
+public class RoomSelectionController  {
+    private RoomSelectionModel model;
 
     @FXML private VBox container;
     @FXML private TextField searchTextField;
 
     public void initialize() {
-        FirebaseListener.addRoomListListener(this);
+        model = new RoomSelectionModel();
+        RoomSelectionNetworkListener network = new RoomSelectionNetworkListener(model, this);
     }
 
-    @Override
-    public void onRoomAdded(HashMap<String, String> roomInfo) {
-        roomsInfo.put(roomInfo.get("id"), roomInfo);
-        makeRoomButtons();
-        System.out.println("NEW ROOM ADDED");
-    }
-
-    @Override
-    public void onRoomRemoved(HashMap<String, String> roomInfo) {
-        roomsInfo.remove(roomInfo.get("id"));
-        makeRoomButtons();
-        System.out.println("ROOM REMOVED");
-    }
-
-    @Override
-    public void onRoomChanged(HashMap<String, String> roomInfo) {
-        roomsInfo.put(roomInfo.get("id"), roomInfo);
-        makeRoomButtons();
-        System.out.println("ROOM CHANGED");
-    }
-
-    private void makeRoomButtons() {
-        updateSearchFilters();
+    public void makeRoomButtons() {
+        model.updateSearchFilters(searchTextField.getText());
         container.getChildren().clear();
-        for (String roomId : roomsInfo.keySet()) {
-            HashMap<String, String> roomInfo = roomsInfo.get(roomId);
-            if (!RoomSelectionUtils.isMatchingFilters(roomInfo, searchFilters)) continue;
+        for (String roomId : model.getRoomsInfo().keySet()) {
+            HashMap<String, String> roomInfo = model.getRoomsInfo().get(roomId);
+            if (!model.isMatchingFilters(roomInfo)) continue;
 
             BorderPane bp = new BorderPane();
             String playersCount = roomInfo.get("playersCount");
@@ -99,7 +77,7 @@ public class RoomSelectionController implements RoomListUpdateCallback {
     }
 
     public void onKeyReleased() {
-        updateSearchFilters();
+        model.updateSearchFilters(searchTextField.getText());
         makeRoomButtons();
     }
 
@@ -111,14 +89,9 @@ public class RoomSelectionController implements RoomListUpdateCallback {
         return icons.toString();
     }
 
-    private void updateSearchFilters() {
-        searchFilters.put("fname", searchTextField.getText());
-        System.out.println("Filters updated: " + searchFilters);
-    }
-
     public void onResetButton() {
         searchTextField.clear();
-        searchFilters.clear();
+        model.clearSearchFilters();
         makeRoomButtons();
     }
 }

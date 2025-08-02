@@ -1,4 +1,4 @@
-package controller.games.tictactoe_classic;
+package controllers.games.tictactoe_classic;
 
 import core.SceneManager;
 import core.logic.Client;
@@ -6,7 +6,7 @@ import core.network.FirebaseListener;
 import core.network.FirebaseManager;
 import core.network.FirebaseReader;
 import core.network.FirebaseWriter;
-import controller.common.GameController;
+import controllers.common.GameController;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -81,8 +81,8 @@ public class TictactoeController extends GameController {
     }
 
     public void onReadyButton(ActionEvent actionEvent) {
-        model.isReadyForGame = !model.isReadyForGame;
-        if (model.isReadyForGame) {
+        model.switchReadyStatus();
+        if (model.getReadyStatus()) {
             FirebaseWriter.setPlayerIsReady(model.roomId, Client.getClientId(), true);
             FirebaseReader.getPlayersReadyAmount(model.roomId).thenAccept(playersReady -> {
                 String maxSize = model.currentRoom.getRoomInfo().get("size");
@@ -103,7 +103,7 @@ public class TictactoeController extends GameController {
     }
 
     public void setReadyButton(Boolean isReady) {
-        model.isReadyForGame = isReady;
+        model.setReadyStatus(isReady);
         if (isReady) readyButton.setText("Cancel");
         else readyButton.setText("Ready");
         root.setCenter(readyButton);
@@ -119,7 +119,7 @@ public class TictactoeController extends GameController {
             else if (Client.getClientTeam().equals("1")) btn.setText("o");
             String opponentTeam = TictactoeUtils.getOpponentTeam(Client.getClientTeam());
             FirebaseWriter.setCurrentTurn(model.roomId, opponentTeam);
-            FirebaseWriter.setGameMap(model.roomId, TictactoeUtils.getGameMap(model.gameFieldButtons));
+            FirebaseWriter.setGameMap(model.roomId, model.getGameMap());
         }
     }
 
@@ -128,7 +128,7 @@ public class TictactoeController extends GameController {
         gameFieldBox.getChildren().remove(rg);
         root.getChildren().remove(gameFieldBox);
 
-        model.isReadyForGame = false;
+        model.setReadyStatus(false);
         readyButton.setText("Ready");
         root.setCenter(readyButton);
 
@@ -164,8 +164,7 @@ public class TictactoeController extends GameController {
                 }
                 btn.setPrefSize(60, 60);
                 btn.setOnAction((_) -> onGameFieldButton(btn));
-
-                model.gameFieldButtons[3 * i + j] = btn;
+                model.setGameFieldButton(3 * i + j, btn);
                 btnGrid.add(btn, i, j);
             }
         }
@@ -180,7 +179,7 @@ public class TictactoeController extends GameController {
         StringBuilder text = new StringBuilder();
         text.append("Room: ").append(model.currentRoom.getRoomInfo().get("name")).append("\n");
         text.append("Players: ");
-        for (HashMap<String, String> playerInfo : model.playersInfo.values()) {
+        for (HashMap<String, String> playerInfo : model.getPlayersInfo().values()) {
             text.append("\n").append(playerInfo.get("name"));
         }
         Platform.runLater(() -> roomInfoLabel.setText(text.toString()));

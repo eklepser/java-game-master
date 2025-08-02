@@ -1,7 +1,7 @@
 package core.network;
 
 import core.logic.Client;
-import controller.common.callbacks.*;
+import controllers.common.callbacks.*;
 
 import com.google.firebase.database.*;
 

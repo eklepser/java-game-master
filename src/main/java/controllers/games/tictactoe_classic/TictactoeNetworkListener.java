@@ -1,9 +1,9 @@
-package controller.games.tictactoe_classic;
+package controllers.games.tictactoe_classic;
 
 import core.logic.Client;
 import core.network.FirebaseListener;
 import core.network.FirebaseWriter;
-import controller.common.GameNetworkListener;
+import controllers.common.GameNetworkListener;
 import javafx.application.Platform;
 import javafx.scene.control.Button;
 import java.util.HashMap;
@@ -26,19 +26,19 @@ public class TictactoeNetworkListener extends GameNetworkListener {
 
     @Override
     public void onPlayerAdded(HashMap<String, String> playerInfo) {
-        model.playersInfo.put(playerInfo.get("id"), playerInfo);
+        model.putPlayerInfo(playerInfo);
         controller.updateRoomInfoLabel();
     }
 
     @Override
     public void onPlayerRemoved(HashMap<String, String> playerInfo) {
-        model.playersInfo.remove(playerInfo.get("id"));
+        model.removePlayerInfo(playerInfo.get("id"));
         controller.updateRoomInfoLabel();
     }
 
     @Override
     public void onPlayerInfoChanged(HashMap<String, String> playerInfo) {
-        model.playersInfo.put(playerInfo.get("id"), playerInfo);
+        model.putPlayerInfo(playerInfo);
     }
 
     @Override
@@ -76,16 +76,11 @@ public class TictactoeNetworkListener extends GameNetworkListener {
     @Override
     public void onGameFinished() {
         if (isFirstInit) return;
-
         FirebaseWriter.setPlayerIsReady(model.roomId, Client.getClientId(), false);
-
         controller.setFinishButton();
-        String winnerName = TictactoeUtils.getPlayerInfoByTurn(model.playersInfo, model.currentGameState.getTurn()).get("name");
+        String winnerName = model.getCurrentPlayerInfo().get("name");
         controller.updateCurrentTurnLabel("Winner is " + winnerName);
-
-        for (Button btn : model.gameFieldButtons) {
-            btn.setDisable(true);
-        }
+        model.disableGameFieldButtons();
     }
 
     @Override

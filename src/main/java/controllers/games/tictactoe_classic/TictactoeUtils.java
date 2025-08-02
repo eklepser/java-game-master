@@ -1,4 +1,4 @@
-package controller.games.tictactoe_classic;
+package controllers.games.tictactoe_classic;
 
 import core.logic.Client;
 import javafx.scene.control.Button;
@@ -6,15 +6,6 @@ import javafx.scene.text.Text;
 import java.util.HashMap;
 
 public class TictactoeUtils {
-    static String getGameMap(Button[] gameFieldButtons) {
-        StringBuilder gameMap = new StringBuilder();
-        for (int i = 0; i < 9; i++) {
-            String btnText = gameFieldButtons[i].getText();
-            if ((btnText.equals("x")) || (btnText.equals("o"))) gameMap.append(btnText);
-            else gameMap.append("-");
-        }
-        return gameMap.toString();
-    }
 
     static String getReadyMessage(String playersReady, String maxSize) {
         StringBuilder text = new StringBuilder();
@@ -71,14 +62,6 @@ public class TictactoeUtils {
 
     static boolean isDraw(String gameMap) {
         return !gameMap.contains("-");
-    }
-
-    static HashMap<String, String> getPlayerInfoByTurn(HashMap<String, HashMap<String, String>> playersInfo, String turn) {
-        String prevTurn = getOpponentTeam(turn);
-        for (HashMap<String, String> playerInfo : playersInfo.values()) {
-            if (playerInfo.get("team").equals(prevTurn)) return playerInfo;
-        }
-        return null;
     }
 
     static String getOpponentTeam(String team) {

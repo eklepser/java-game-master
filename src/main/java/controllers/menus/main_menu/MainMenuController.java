@@ -1,4 +1,4 @@
-package controller.menus.main_menu;
+package controllers.menus.main_menu;
 
 import core.logic.Client;
 import core.SceneManager;
