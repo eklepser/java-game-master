@@ -1,11 +1,9 @@
 package controllers.menus.room_selection;
 
 import javafx.geometry.Pos;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
-
 import java.util.HashMap;
 
 public class RoomSelectionUtils {

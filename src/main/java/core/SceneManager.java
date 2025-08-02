@@ -14,6 +14,8 @@ public class SceneManager {
         primaryStage = stage;
     }
 
+    public static Stage getPrimaryStage() { return primaryStage; }
+
     public static void loadScene(String fxmlPath) throws IOException {
         FXMLLoader loader = new FXMLLoader(Main.class.getResource("/scenes/" + fxmlPath));
         System.out.println(loader.getLocation());

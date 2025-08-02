@@ -1,19 +1,20 @@
 package controllers.menus.room_selection;
 
 import core.SceneManager;
-import core.logic.Client;
 import core.network.FirebaseListener;
 import core.network.FirebaseManager;
 import javafx.application.Platform;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.fxml.FXML;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextFlow;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
+import javafx.scene.Scene;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -22,6 +23,8 @@ public class RoomSelectionController  {
     private RoomSelectionModel model;
     private RoomSelectionNetworkListener network;
     private final HashMap<String, String> searchFilters = new HashMap<>();
+    private boolean isPasswordCorrect = false;
+    private Stage submitStage;
 
     @FXML private VBox roomListBox;
     @FXML private HBox searchFiltersBox;
@@ -29,10 +32,14 @@ public class RoomSelectionController  {
     @FXML private ComboBox<String> gameModeComboBox;
     @FXML private ToggleButton showLockedRoomsButton;
     @FXML private ToggleButton showFullRoomsButton;
+    @FXML private Button submitButton;
 
     public void initialize() {
         model = new RoomSelectionModel();
         network = new RoomSelectionNetworkListener(model, this);
+
+        submitButton = new Button("Enter");
+        submitButton.setPrefWidth(100);
     }
 
     private void updateSearchFilters() {
@@ -40,7 +47,6 @@ public class RoomSelectionController  {
         searchFilters.put("f_mode", gameModeComboBox.getValue());
         searchFilters.put("f_locked", String.valueOf(showLockedRoomsButton.isSelected()));
         searchFilters.put("f_full", String.valueOf(showFullRoomsButton.isSelected()));
-
         System.out.println("Filters updated: " + searchFilters);
     }
 
@@ -81,6 +87,27 @@ public class RoomSelectionController  {
 
     @FXML
     private void onRoomButtonClick(String roomId) throws IOException {
+        HashMap<String, String> roomInfo = model.getRoomsInfo().get(roomId);
+        String roomPassword = roomInfo.get("password");
+        if (!roomPassword.isEmpty()) {
+            Stage submitStage = showPasswordSubmitStage(roomPassword);
+            submitStage.showAndWait();
+            if (isPasswordCorrect) {
+                enterRoom(roomId);
+            }
+        }
+        else enterRoom(roomId);
+    }
+
+    private void onSubmitButton(String userPassword, String roomPassword) {
+        if (userPassword.equals(roomPassword))
+        {
+            isPasswordCorrect = true;
+            submitStage.close();
+        }
+    }
+
+    private void enterRoom(String roomId) {
         FirebaseManager.attachClient(roomId);
         Platform.runLater(() -> {
             try {
@@ -98,7 +125,6 @@ public class RoomSelectionController  {
         gameModeComboBox.setValue("All games");
         showLockedRoomsButton.setSelected(true);
         showFullRoomsButton.setSelected(false);
-
         searchFilters.clear();
         updateRoomButtons();
     }
@@ -115,4 +141,32 @@ public class RoomSelectionController  {
             FirebaseListener.removeRoomListListener();
         }
     }
+
+    private Stage showPasswordSubmitStage(String roomPassword) {
+        submitStage = new Stage();
+        submitStage.initOwner(SceneManager.getPrimaryStage());
+        submitStage.initModality(Modality.WINDOW_MODAL);
+        submitStage.initStyle(StageStyle.UNDECORATED);
+        Label label = new Label("Enter the password:");
+        PasswordField passwordField = new PasswordField();
+
+        Button backButton = new Button("Back");
+        backButton.setPrefWidth(100);
+        backButton.setOnAction((_) -> submitStage.close());
+        submitButton.setOnAction((_) -> onSubmitButton(passwordField.getText(), roomPassword));
+        Region buttonsRegion = new Region();
+
+        HBox buttonsBox = new HBox(backButton, buttonsRegion, submitButton);
+        HBox.setHgrow(buttonsRegion, Priority.ALWAYS);
+        VBox dialogLayout = new VBox(10, label, passwordField, buttonsBox);
+
+        dialogLayout.setAlignment(Pos.CENTER);
+        dialogLayout.setPadding(new Insets(20));
+        Scene dialogScene = new Scene(dialogLayout, 250, 150);
+        submitStage.setScene(dialogScene);
+
+        return submitStage;
+    }
+
+
 }
