@@ -1,8 +1,9 @@
 package controllers.menus.room_selection;
 
-import core.SceneManager;
+import core.scenes.SceneManager;
 import core.network.FirebaseListener;
 import core.network.FirebaseManager;
+import core.scenes.ScenePath;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -90,7 +91,8 @@ public class RoomSelectionController  {
         HashMap<String, String> roomInfo = model.getRoomsInfo().get(roomId);
         String roomPassword = roomInfo.get("password");
         if (!roomPassword.isEmpty()) {
-            Stage submitStage = showPasswordSubmitStage(roomPassword);
+            Stage submitStage = SceneManager.loadModalScene(ScenePath.PASSWORD_CONFIRMATION);
+            //Stage submitStage = showPasswordSubmitStage(roomPassword);
             submitStage.showAndWait();
             if (isPasswordCorrect) {
                 enterRoom(roomId);
@@ -111,7 +113,7 @@ public class RoomSelectionController  {
         FirebaseManager.attachClient(roomId);
         Platform.runLater(() -> {
             try {
-                SceneManager.loadScene("games/tictactoe_classic.fxml");
+                SceneManager.loadScene(ScenePath.TICTACTOE_CLASSIC);
                 FirebaseListener.removeRoomListListener();
             }
             catch (IOException e) {
@@ -131,42 +133,14 @@ public class RoomSelectionController  {
 
     @FXML
     private void onBackButtonClick() throws IOException {
-        SceneManager.loadScene("menus/main_menu.fxml");
+        SceneManager.loadScene(ScenePath.MAIN_MENU);
         FirebaseListener.removeRoomListListener();
     }
 
     public void onKeyPressed(KeyEvent keyEvent) throws IOException {
         if (keyEvent.getCode() == KeyCode.ESCAPE) {
-            SceneManager.loadScene("menus/main_menu.fxml");
+            SceneManager.loadScene(ScenePath.MAIN_MENU);
             FirebaseListener.removeRoomListListener();
         }
     }
-
-    private Stage showPasswordSubmitStage(String roomPassword) {
-        submitStage = new Stage();
-        submitStage.initOwner(SceneManager.getPrimaryStage());
-        submitStage.initModality(Modality.WINDOW_MODAL);
-        submitStage.initStyle(StageStyle.UNDECORATED);
-        Label label = new Label("Enter the password:");
-        PasswordField passwordField = new PasswordField();
-
-        Button backButton = new Button("Back");
-        backButton.setPrefWidth(100);
-        backButton.setOnAction((_) -> submitStage.close());
-        submitButton.setOnAction((_) -> onSubmitButton(passwordField.getText(), roomPassword));
-        Region buttonsRegion = new Region();
-
-        HBox buttonsBox = new HBox(backButton, buttonsRegion, submitButton);
-        HBox.setHgrow(buttonsRegion, Priority.ALWAYS);
-        VBox dialogLayout = new VBox(10, label, passwordField, buttonsBox);
-
-        dialogLayout.setAlignment(Pos.CENTER);
-        dialogLayout.setPadding(new Insets(20));
-        Scene dialogScene = new Scene(dialogLayout, 250, 150);
-        submitStage.setScene(dialogScene);
-
-        return submitStage;
-    }
-
-
 }

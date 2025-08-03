@@ -1,6 +1,8 @@
 package core;
 
 import core.network.FirebaseManager;
+import core.scenes.SceneManager;
+import core.scenes.ScenePath;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import java.io.IOException;
@@ -11,7 +13,7 @@ public class Main extends Application {
     public void start(Stage stage) throws IOException, URISyntaxException {
         FirebaseManager.init();
         SceneManager.init(stage);
-        SceneManager.loadScene("menus/main_menu.fxml");
+        SceneManager.loadScene(ScenePath.MAIN_MENU);
     }
 
     public static void main(String[] args) {

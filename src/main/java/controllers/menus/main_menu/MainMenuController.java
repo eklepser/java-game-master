@@ -1,7 +1,8 @@
 package controllers.menus.main_menu;
 
 import core.logic.Client;
-import core.SceneManager;
+import core.scenes.SceneManager;
+import core.scenes.ScenePath;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
@@ -22,12 +23,12 @@ public class MainMenuController {
 
     @FXML
     protected void onRoomCreationButtonClick() throws IOException {
-        SceneManager.loadScene("menus/room_creation.fxml");
+        SceneManager.loadScene(ScenePath.ROOM_CREATION);
     }
 
     @FXML
     protected void onRoomSelectionButtonClick() throws IOException {
-        SceneManager.loadScene("menus/room_selection.fxml");
+        SceneManager.loadScene(ScenePath.ROOM_SELECTION);
     }
 
     public void onKeyReleased(KeyEvent keyEvent) {

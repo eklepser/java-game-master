@@ -1,8 +1,9 @@
 package controllers.menus.room_creation;
 
-import core.SceneManager;
+import core.scenes.SceneManager;
 import core.network.FirebaseManager;
 import core.network.FirebaseWriter;
+import core.scenes.ScenePath;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
@@ -34,7 +35,7 @@ public class RoomCreationController {
 
         Platform.runLater(() -> {
             try {
-                SceneManager.loadScene("games/" + getGameModeFXML(gameMode) + ".fxml");
+                SceneManager.loadScene(getGameModeFXML(gameMode));
             }
             catch (IOException e) {
                 throw new RuntimeException(e);
@@ -44,13 +45,13 @@ public class RoomCreationController {
 
     @FXML
     protected void onBackButtonClick() throws IOException {
-        SceneManager.loadScene("menus/main_menu.fxml");
+        SceneManager.loadScene(ScenePath.MAIN_MENU);
     }
 
     private String getGameModeFXML(String gameModeName) {
         return switch (gameModeName) {
-            case "Tic-tac-toe Classic" -> "tictactoe_classic";
-            case "Chat game" -> "chat_game";
+            case "Tic-tac-toe Classic" -> ScenePath.TICTACTOE_CLASSIC;
+            case "Chat game" -> ScenePath.CHAT_GAME;
             default -> "";
         };
     }

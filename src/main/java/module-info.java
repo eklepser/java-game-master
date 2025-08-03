@@ -34,4 +34,6 @@ module org.example.javava {
     opens controllers.menus.room_creation to javafx.fxml;
     exports controllers.menus.room_selection;
     opens controllers.menus.room_selection to javafx.fxml;
+    exports core.scenes;
+    opens core.scenes to javafx.fxml;
 }
