@@ -2,21 +2,14 @@ package controllers.menus.room_selection;
 
 import core.scenes.SceneManager;
 import core.network.FirebaseListener;
-import core.network.FirebaseManager;
 import core.scenes.ScenePath;
-import javafx.application.Platform;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
+import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.*;
-import javafx.fxml.FXML;
-import javafx.stage.Modality;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
-import javafx.scene.Scene;
-
 import java.io.IOException;
 import java.util.HashMap;
 
@@ -24,8 +17,6 @@ public class RoomSelectionController  {
     private RoomSelectionModel model;
     private RoomSelectionNetworkListener network;
     private final HashMap<String, String> searchFilters = new HashMap<>();
-    private boolean isPasswordCorrect = false;
-    private Stage submitStage;
 
     @FXML private VBox roomListBox;
     @FXML private HBox searchFiltersBox;
@@ -33,14 +24,47 @@ public class RoomSelectionController  {
     @FXML private ComboBox<String> gameModeComboBox;
     @FXML private ToggleButton showLockedRoomsButton;
     @FXML private ToggleButton showFullRoomsButton;
-    @FXML private Button submitButton;
 
     public void initialize() {
         model = new RoomSelectionModel();
         network = new RoomSelectionNetworkListener(model, this);
+    }
 
-        submitButton = new Button("Enter");
-        submitButton.setPrefWidth(100);
+    @FXML
+    private void onRoomButtonClick(String roomId) throws IOException {
+        model.setSelectedRoom(roomId);
+        HashMap<String, String> roomInfo = model.getRoomsInfo().get(roomId);
+        String roomPassword = roomInfo.get("password");
+        if (!roomPassword.isEmpty()) {
+            SceneManager.setUserData(model);
+            Stage submitStage = SceneManager.loadModalScene(ScenePath.PASSWORD_CONFIRMATION);
+            submitStage.showAndWait();
+        }
+        else model.enterRoom(roomId);
+    }
+
+    @FXML
+    private void onBackButtonClick() throws IOException {
+        SceneManager.loadScene(ScenePath.MAIN_MENU);
+        FirebaseListener.removeRoomListListener();
+    }
+
+    @FXML
+    private void onResetButton() {
+        searchTextField.clear();
+        gameModeComboBox.setValue("All games");
+        showLockedRoomsButton.setSelected(true);
+        showFullRoomsButton.setSelected(false);
+        searchFilters.clear();
+        updateRoomButtons();
+    }
+
+    @FXML
+    private void onKeyPressed(KeyEvent keyEvent) throws IOException {
+        if (keyEvent.getCode() == KeyCode.ESCAPE) {
+            SceneManager.loadScene(ScenePath.MAIN_MENU);
+            FirebaseListener.removeRoomListListener();
+        }
     }
 
     private void updateSearchFilters() {
@@ -83,64 +107,6 @@ public class RoomSelectionController  {
                 catch (IOException e) {throw new RuntimeException(e); }
             });
             roomListBox.getChildren().add(btn);
-        }
-    }
-
-    @FXML
-    private void onRoomButtonClick(String roomId) throws IOException {
-        HashMap<String, String> roomInfo = model.getRoomsInfo().get(roomId);
-        String roomPassword = roomInfo.get("password");
-        if (!roomPassword.isEmpty()) {
-            Stage submitStage = SceneManager.loadModalScene(ScenePath.PASSWORD_CONFIRMATION);
-            //Stage submitStage = showPasswordSubmitStage(roomPassword);
-            submitStage.showAndWait();
-            if (isPasswordCorrect) {
-                enterRoom(roomId);
-            }
-        }
-        else enterRoom(roomId);
-    }
-
-    private void onSubmitButton(String userPassword, String roomPassword) {
-        if (userPassword.equals(roomPassword))
-        {
-            isPasswordCorrect = true;
-            submitStage.close();
-        }
-    }
-
-    private void enterRoom(String roomId) {
-        FirebaseManager.attachClient(roomId);
-        Platform.runLater(() -> {
-            try {
-                SceneManager.loadScene(ScenePath.TICTACTOE_CLASSIC);
-                FirebaseListener.removeRoomListListener();
-            }
-            catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        });
-    }
-
-    public void onResetButton() {
-        searchTextField.clear();
-        gameModeComboBox.setValue("All games");
-        showLockedRoomsButton.setSelected(true);
-        showFullRoomsButton.setSelected(false);
-        searchFilters.clear();
-        updateRoomButtons();
-    }
-
-    @FXML
-    private void onBackButtonClick() throws IOException {
-        SceneManager.loadScene(ScenePath.MAIN_MENU);
-        FirebaseListener.removeRoomListListener();
-    }
-
-    public void onKeyPressed(KeyEvent keyEvent) throws IOException {
-        if (keyEvent.getCode() == KeyCode.ESCAPE) {
-            SceneManager.loadScene(ScenePath.MAIN_MENU);
-            FirebaseListener.removeRoomListListener();
         }
     }
 }

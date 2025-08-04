@@ -22,6 +22,14 @@ public class SceneManager {
         sceneHeight = 400;
     }
 
+    public static Object getUserData() {
+        return primaryStage.getScene().getUserData();
+    }
+
+    public static void setUserData(Object userData) {
+        primaryStage.getScene().setUserData(userData);
+    }
+
     public static void loadScene(String fxmlPath) throws IOException {
         FXMLLoader loader = new FXMLLoader(Main.class.getResource("/scenes" + fxmlPath));
         setupPrimaryStage();

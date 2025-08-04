@@ -14,7 +14,9 @@
 
 <?import javafx.scene.control.CheckBox?>
 <BorderPane xmlns:fx="http://javafx.com/fxml"
-            fx:controller="controllers.menus.room_creation.RoomCreationController">
+            fx:controller="controllers.menus.room_creation.RoomCreationController"
+            style="-fx-focus-color: #5a5a5a;
+                   -fx-faint-focus-color: transparent;">>
 
     <padding>
         <Insets top="10" bottom="10" left="10" right="10"/>

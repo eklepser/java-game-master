@@ -1,27 +1,55 @@
 package controllers.menus.room_selection;
 
+import core.network.FirebaseListener;
 import core.scenes.SceneManager;
+import core.scenes.ScenePath;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 
+import java.util.HashMap;
+
 public class PasswordConfirmationController {
+    private RoomSelectionModel model;
     @FXML private PasswordField passwordField;
     @FXML private Button backButton;
     @FXML private Button submitButton;
 
     public void initialize() {
-
+        model = (RoomSelectionModel) SceneManager.getUserData();
     }
 
-    public void onBackButton(ActionEvent actionEvent) {
-        Stage stage = (Stage) backButton.getScene().getWindow();
-        stage.close();
+    @FXML
+    private void onBackButton() {
+        Stage submitStage = (Stage) backButton.getScene().getWindow();
+        submitStage.close();
     }
 
-    public void onSubmitButton(ActionEvent actionEvent) {
+    @FXML
+    private void onSubmitButton() {
+        HashMap<String, String> roomInfo = model.getSelectedRoomInfo();
+        String userInput = passwordField.getText();
+        String roomPassword = roomInfo.get("password");
+        if (userInput.equals(roomPassword)) {
+            model.enterRoom(roomInfo.get("id"));
+            Stage submitStage = (Stage) backButton.getScene().getWindow();
+            submitStage.close();
+        }
+    }
+
+    @FXML
+    private void onKeyReleased(KeyEvent keyEvent) {
+        if (keyEvent.getCode() == KeyCode.ENTER) {
+            onSubmitButton();
+        }
+        if (keyEvent.getCode() == KeyCode.ESCAPE) {
+            Stage submitStage = (Stage) backButton.getScene().getWindow();
+            submitStage.close();
+        }
     }
 }
 

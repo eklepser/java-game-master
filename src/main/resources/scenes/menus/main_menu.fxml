@@ -9,7 +9,9 @@
 
 <?import javafx.scene.layout.Region?>
 <BorderPane xmlns:fx="http://javafx.com/fxml"
-            fx:controller="controllers.menus.main_menu.MainMenuController">
+            fx:controller="controllers.menus.main_menu.MainMenuController"
+            style="-fx-focus-color: #5a5a5a;
+                   -fx-faint-focus-color: transparent;">
 
     <padding>
         <Insets top="20" bottom="20" left="20" right="20"/>
