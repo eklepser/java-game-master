@@ -50,7 +50,6 @@ public class FirebaseManager {
             Platform.runLater(() -> {
                 try {
                     SceneManager.loadScene(getGameModeFXML(room.getGameMode()));
-                    FirebaseListener.removeRoomListListener();
                 }
                 catch (IOException e) {
                     throw new RuntimeException(e);

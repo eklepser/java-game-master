@@ -38,11 +38,11 @@ public class SceneManager {
         primaryStage.show();
     }
 
-    public static Stage loadModalScene(String fxmlPath) throws IOException {
+    public static Stage loadModalScene(String fxmlPath, int width, int height) throws IOException {
         modalStage = new Stage();
         setupModalStage();
         FXMLLoader loader = new FXMLLoader(Main.class.getResource("/scenes" + fxmlPath));
-        Scene scene = new Scene(loader.load(), 400, 300);
+        Scene scene = new Scene(loader.load(), width, height);
         modalStage.setScene(scene);
         return modalStage;
     }

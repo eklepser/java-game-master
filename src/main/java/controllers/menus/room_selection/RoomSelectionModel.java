@@ -23,7 +23,7 @@ public class RoomSelectionModel {
     public void setSelectedRoom(String id) { selectedRoomId = id; }
 
     public void enterRoom(String roomId) {
-        FirebaseManager.attachClient(roomId);
         FirebaseListener.removeRoomListListener();
+        FirebaseManager.attachClient(roomId);
     }
 }

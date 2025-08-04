@@ -38,7 +38,7 @@ public class RoomSelectionController  {
         String roomPassword = room.getPassword();
         if (!roomPassword.isEmpty()) {
             SceneManager.setUserData(model);
-            Stage submitStage = SceneManager.loadModalScene(ScenePath.PASSWORD_CONFIRMATION);
+            Stage submitStage = SceneManager.loadModalScene(ScenePath.PASSWORD_CONFIRMATION, 300, 120);
             submitStage.showAndWait();
         }
         else model.enterRoom(roomId);
