@@ -1,5 +1,6 @@
 package controllers.menus.room_selection;
 
+import core.logic.Room;
 import core.network.FirebaseListener;
 import core.network.FirebaseManager;
 import core.scenes.SceneManager;
@@ -14,24 +15,17 @@ import java.io.IOException;
 import java.util.HashMap;
 
 public class RoomSelectionUtils {
-    public static String getRoomInfoIcons(HashMap<String, String> roomInfo) {
-        StringBuilder icons = new StringBuilder();
-        String password = roomInfo.get("password");
-        if ((password != null) && !password.isBlank()) icons.append("\uD83D\uDD12");
-        return icons.toString();
-    }
-
-    public static BorderPane getRoomButtonGraphics(HashMap<String, String> roomInfo) {
-        Text name = new Text(roomInfo.get("name"));
-        Text mode = new Text(" (" + roomInfo.get("gameMode") + ")");
+    public static BorderPane getRoomButtonGraphics(Room room) {
+        Text name = new Text(room.getName());
+        Text mode = new Text(" (" + room.getGameMode() + ")");
         mode.setStyle("-fx-font-style: italic; -fx-fill: derive(-fx-text-fill, 40%);");
         TextFlow leftTextFlow = new TextFlow(name, mode);
         leftTextFlow.setStyle("-fx-font-size: 16px;");
 
-        String playersCount = roomInfo.get("playersCount");
-        String size = roomInfo.get("size");
+        String playersCount = String.valueOf(room.getPlayersCount());
+        String size = room.getSize();
         Text fullness = new Text(playersCount + "/" + size);
-        Text status = new Text(getRoomInfoIcons(roomInfo));
+        Text status = new Text(getRoomInfoIcons(room));
         TextFlow rightTextFlow = new TextFlow(fullness, status);
         rightTextFlow.setStyle("-fx-font-size: 16px;");
 
@@ -43,5 +37,12 @@ public class RoomSelectionUtils {
         borderPane.setLeft(leftBox);
         borderPane.setRight(rightBox);
         return borderPane;
+    }
+
+    private static String getRoomInfoIcons(Room room) {
+        StringBuilder icons = new StringBuilder();
+        String password = room.getPassword();
+        if ((password != null) && !password.isBlank()) icons.append("\uD83D\uDD12");
+        return icons.toString();
     }
 }

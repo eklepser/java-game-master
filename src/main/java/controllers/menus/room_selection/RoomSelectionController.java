@@ -1,5 +1,6 @@
 package controllers.menus.room_selection;
 
+import core.logic.Room;
 import core.scenes.SceneManager;
 import core.network.FirebaseListener;
 import core.scenes.ScenePath;
@@ -33,8 +34,8 @@ public class RoomSelectionController  {
     @FXML
     private void onRoomButtonClick(String roomId) throws IOException {
         model.setSelectedRoom(roomId);
-        HashMap<String, String> roomInfo = model.getRoomsInfo().get(roomId);
-        String roomPassword = roomInfo.get("password");
+        Room room = model.getSelectedRoom();
+        String roomPassword = room.getPassword();
         if (!roomPassword.isEmpty()) {
             SceneManager.setUserData(model);
             Stage submitStage = SceneManager.loadModalScene(ScenePath.PASSWORD_CONFIRMATION);
@@ -72,22 +73,21 @@ public class RoomSelectionController  {
         searchFilters.put("f_mode", gameModeComboBox.getValue());
         searchFilters.put("f_locked", String.valueOf(showLockedRoomsButton.isSelected()));
         searchFilters.put("f_full", String.valueOf(showFullRoomsButton.isSelected()));
-        System.out.println("Filters updated: " + searchFilters);
     }
 
-    private boolean isMatchingFilters(HashMap<String, String> roomInfo) {
-        String fNameCorrected = searchFilters.get("f_name").toLowerCase().replaceAll("\\s", "");;
-        String nameCorrected = roomInfo.get("name").toLowerCase().replaceAll("\\s", "");;
+    private boolean isMatchingFilters(Room room) {
+        String fNameCorrected = searchFilters.get("f_name").toLowerCase().replaceAll("\\s", "");
+        System.out.println("NAME: "+room.getName());
+        String nameCorrected = room.getName().toLowerCase().replaceAll("\\s", "");
         boolean isMatching = (nameCorrected.startsWith(fNameCorrected));
 
         String fMode = searchFilters.get("f_mode");
-        if (!fMode.equals("All games")) isMatching = isMatching && (roomInfo.get("gameMode").equals(fMode));
-
         String fLocked = searchFilters.get("f_locked");
-        if (fLocked.equals("false")) isMatching = isMatching && (roomInfo.get("password").isEmpty());
-
         String fFull = searchFilters.get("f_full");
-        if (fFull.equals("false")) isMatching = isMatching && !(roomInfo.get("size").equals(roomInfo.get("playersCount")));
+        String playersCount = String.valueOf(room.getPlayersCount());
+        if (!fMode.equals("All games")) isMatching = isMatching && (room.getGameMode().equals(fMode));
+        if (fLocked.equals("false")) isMatching = isMatching && (room.getPassword().isEmpty());
+        if (fFull.equals("false")) isMatching = isMatching && !(room.getSize().equals(playersCount));
 
         return isMatching;
     }
@@ -95,12 +95,11 @@ public class RoomSelectionController  {
     public void updateRoomButtons() {
         updateSearchFilters();
         roomListBox.getChildren().clear();
-        for (String roomId : model.getRoomsInfo().keySet()) {
-            HashMap<String, String> roomInfo = model.getRoomsInfo().get(roomId);
-            if (!isMatchingFilters(roomInfo)) continue;
-
+        for (String roomId : model.getAllRooms().keySet()) {
+            Room room = model.getAllRooms().get(roomId);
+            if (!isMatchingFilters(room)) continue;
             Button btn = new Button();
-            btn.setGraphic(RoomSelectionUtils.getRoomButtonGraphics(roomInfo));
+            btn.setGraphic(RoomSelectionUtils.getRoomButtonGraphics(room));
             btn.setMaxWidth(Double.MAX_VALUE);
             btn.setOnAction((_) -> {
                 try { onRoomButtonClick(roomId); }

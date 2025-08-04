@@ -87,7 +87,7 @@ public class TictactoeController extends GameController {
         if (model.getReadyStatus()) {
             FirebaseWriter.setPlayerIsReady(model.roomId, Client.getClientId(), true);
             FirebaseReader.getPlayersReadyAmount(model.roomId).thenAccept(playersReady -> {
-                String maxSize = model.currentRoom.getRoomInfo().get("size");
+                String maxSize = model.currentRoom.getSize();
                 String message = TictactoeUtils.getReadyMessage(String.valueOf(playersReady), maxSize);
                 model.sendMessage(message, true);
                 boolean isAllPlayersReady = Objects.equals(String.valueOf(playersReady), maxSize);
@@ -179,7 +179,7 @@ public class TictactoeController extends GameController {
 
     public void updateRoomInfoLabel() {
         StringBuilder text = new StringBuilder();
-        text.append("Room: ").append(model.currentRoom.getRoomInfo().get("name")).append("\n");
+        text.append("Room: ").append(model.currentRoom.getName()).append("\n");
         text.append("Players: ");
         for (HashMap<String, String> playerInfo : model.getPlayersInfo().values()) {
             text.append("\n").append(playerInfo.get("name"));

@@ -2,6 +2,7 @@ package core.network;
 
 import core.logic.Client;
 import com.google.firebase.database.DatabaseReference;
+import core.logic.Room;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,26 +11,26 @@ import java.util.Random;
 public class FirebaseWriter {
     private static final Random random = new Random();
 
-    public static String addRoom(HashMap<String, String> roomInfo) {
-       return addRoom(roomInfo, "2");
+    public static String addRoom(Room room) {
+       return addRoom(room, "2");
     }
 
-    public static String addRoom(HashMap<String, String> roomInfo, String roomSize) {
+    public static String addRoom(Room room, String roomSize) {
         DatabaseReference newRoomRef = FirebaseTools.roomsRef.push();
         String roomId = newRoomRef.getKey();
         DatabaseReference newRoomInfoRef = FirebaseTools.getRoomInfoRefByRoomId(roomId);
         DatabaseReference newRoomGameStateRef = FirebaseTools.getGameStateRefByRoomId(roomId);
 
-        newRoomInfoRef.child("name").setValueAsync(roomInfo.get("name"));
-        newRoomInfoRef.child("gameMode").setValueAsync(roomInfo.get("gameMode"));
-        newRoomInfoRef.child("password").setValueAsync(roomInfo.get("password"));
-        newRoomInfoRef.child("allowToWatch").setValueAsync(roomInfo.get("allowToWatch"));
+        newRoomInfoRef.child("name").setValueAsync(room.getName());
+        newRoomInfoRef.child("gameMode").setValueAsync(room.getGameMode());
+        newRoomInfoRef.child("password").setValueAsync(room.getPassword());
+        newRoomInfoRef.child("allowToWatch").setValueAsync(room.getAllowToWatch());
         newRoomInfoRef.child("size").setValueAsync(roomSize);
 
         newRoomGameStateRef.child("globalState").setValueAsync("preparing");
         newRoomGameStateRef.child("currentTurn").setValueAsync("0");
         newRoomGameStateRef.child("gameMap").setValueAsync("---------");
-        return roomId; //returning newRoomId
+        return roomId;
     }
 
     public static String addClientToRoom(String roomId) {

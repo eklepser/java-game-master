@@ -2,11 +2,9 @@ package core.network;
 
 import core.logic.Client;
 import controllers.common.callbacks.*;
-
 import com.google.firebase.database.*;
-
+import core.logic.Room;
 import javafx.application.Platform;
-
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -75,10 +73,8 @@ public class FirebaseListener {
                             break;
                         case "finished":
                             Platform.runLater(() -> callback.onGameFinished(false));
-                            System.out.println("game finished");
                             break;
                         case "finished with draw":
-                            System.out.println("game finished with draw");
                             Platform.runLater(() -> callback.onGameFinished(true));
                             break;
                         case "paused":
@@ -178,40 +174,39 @@ public class FirebaseListener {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 Platform.runLater(() -> {
-                    HashMap<String, String> roomInfo = getRoomInfo(dataSnapshot);
-                    callback.onRoomAdded(roomInfo);
-                    System.out.println(roomInfo);
+                    Room room = getRoom(dataSnapshot);
+                    callback.onRoomAdded(room);
                 });
             }
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
                 Platform.runLater(() -> {
-                    HashMap<String, String> roomInfo = getRoomInfo(dataSnapshot);
-                    callback.onRoomRemoved(roomInfo);
+                    Room room = getRoom(dataSnapshot);
+                    callback.onRoomRemoved(room);
                 });
             }
 
             @Override public void onChildChanged(DataSnapshot dataSnapshot, String s) {
                 Platform.runLater(() -> {
-                    HashMap<String, String> roomInfo = getRoomInfo(dataSnapshot);
-                    callback.onRoomChanged(roomInfo);
+                    Room room = getRoom(dataSnapshot);
+                    callback.onRoomChanged(room);
                 });
             }
 
             @Override public void onChildMoved(DataSnapshot dataSnapshot, String s) { }
             @Override public void onCancelled(DatabaseError databaseError) { }
 
-            private HashMap<String, String> getRoomInfo(DataSnapshot ds) {
-                return new HashMap<>() {{
-                    put("id", ds.getKey());
-                    put("name", (String) ds.child("info/name").getValue());
-                    put("gameMode", (String) ds.child("info/gameMode").getValue());
-                    put("password", (String) ds.child("info/password").getValue());
-                    put("allowToWatch", (String) ds.child("info/allowToWatch").getValue());
-                    put("size", (String) ds.child("info/size").getValue());
-                    put("playersCount", String.valueOf(ds.child("players").getChildrenCount()));
-                }};
+            private Room getRoom(DataSnapshot ds) {
+                Room room = new Room();
+                room.setId(ds.getKey());
+                room.setName((String) ds.child("info/name").getValue());
+                room.setGameMode((String) ds.child("info/gameMode").getValue());
+                room.setPassword((String) ds.child("info/password").getValue());
+                room.setAllowToWatch((String) ds.child("info/allowToWatch").getValue());
+                room.setSize((String) ds.child("info/size").getValue());
+                room.setPlayersCount((int) ds.child("players").getChildrenCount());
+                return room;
             }
         };
 

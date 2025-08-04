@@ -1,5 +1,6 @@
 package controllers.menus.room_selection;
 
+import core.logic.Room;
 import core.network.FirebaseListener;
 import core.scenes.SceneManager;
 import core.scenes.ScenePath;
@@ -31,11 +32,11 @@ public class PasswordConfirmationController {
 
     @FXML
     private void onSubmitButton() {
-        HashMap<String, String> roomInfo = model.getSelectedRoomInfo();
+        Room selectedRoom = model.getSelectedRoom();
         String userInput = passwordField.getText();
-        String roomPassword = roomInfo.get("password");
+        String roomPassword = selectedRoom.getPassword();
         if (userInput.equals(roomPassword)) {
-            model.enterRoom(roomInfo.get("id"));
+            model.enterRoom(selectedRoom.getId());
             Stage submitStage = (Stage) backButton.getScene().getWindow();
             submitStage.close();
         }

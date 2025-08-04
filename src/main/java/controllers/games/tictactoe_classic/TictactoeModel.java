@@ -19,7 +19,6 @@ public class TictactoeModel extends GameModel {
     public HashMap<String, HashMap<String, String>> getPlayersInfo() { return playersInfo; }
 
     public void putPlayerInfo(HashMap<String, String> playerInfo) { playersInfo.put(playerInfo.get("id"), playerInfo); }
-
     public void removePlayerInfo(String id) { playersInfo.remove(id); }
 
     public HashMap<String, String> getCurrentPlayerInfo() {
@@ -32,7 +31,6 @@ public class TictactoeModel extends GameModel {
     }
 
     public void setReadyStatus(Boolean isReady) { isReadyForGame = isReady; }
-
     public boolean getReadyStatus() { return isReadyForGame; }
 
     public void switchReadyStatus() { isReadyForGame = !isReadyForGame; }

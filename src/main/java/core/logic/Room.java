@@ -1,23 +1,49 @@
 package core.logic;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 
 public class Room {
-    private String currentRoomId;
-    private HashMap<String, String> currentRoomInfo;
+    private String id;
+    private String name;
+    private String gameMode;
+    private String password;
+    private String allowToWatch;
+    private String size;
+    private ArrayList<String> players;
+    private int playersCount;
 
     public Room() {
-        currentRoomId = "";
-        currentRoomInfo = new HashMap<>();
+        id = "";
+        name = "";
+        gameMode = "";
+        password = "";
+        allowToWatch = "";
+        size = "";
+        players = new ArrayList<>();
+        playersCount = 0;
     }
 
-    public void setRoomId(String roomId) {
-        currentRoomId = roomId;
-    }
-    public String getRoomId() {
-        return currentRoomId;
-    }
+    public String getId() { return id; }
+    public void setId(String roomId) { id = roomId; }
 
-    public void setRoomInfo(HashMap<String, String> roomInfo) { currentRoomInfo = roomInfo; }
-    public HashMap<String, String> getRoomInfo() { return currentRoomInfo; }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+
+    public String getGameMode() { return gameMode; }
+    public void setGameMode(String gameMode) {this.gameMode = gameMode; }
+
+    public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
+
+    public String getAllowToWatch() { return allowToWatch; }
+    public void setAllowToWatch(String allowToWatch) { this.allowToWatch = allowToWatch; }
+
+    public String getSize() { return size; }
+    public void setSize(String size) { this.size = size; }
+
+    public ArrayList<String> getPlayers() { return players; }
+    public void setPlayers(ArrayList<String> players) { this.players = players; }
+
+    public int getPlayersCount() { return players.size(); }
+    public void setPlayersCount(int pc) { playersCount = pc; }
 }

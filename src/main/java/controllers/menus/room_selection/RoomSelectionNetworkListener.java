@@ -1,8 +1,8 @@
 package controllers.menus.room_selection;
 
 import controllers.common.callbacks.RoomListUpdateCallback;
+import core.logic.Room;
 import core.network.FirebaseListener;
-import java.util.HashMap;
 
 public class RoomSelectionNetworkListener implements RoomListUpdateCallback {
     private final RoomSelectionModel model;
@@ -15,23 +15,20 @@ public class RoomSelectionNetworkListener implements RoomListUpdateCallback {
     }
 
     @Override
-    public void onRoomAdded(HashMap<String, String> roomInfo) {
-        model.putRoomInfo(roomInfo);
+    public void onRoomAdded(Room room) {
+        model.putRoom(room);
         controller.updateRoomButtons();
-        System.out.println("NEW ROOM ADDED");
     }
 
     @Override
-    public void onRoomRemoved(HashMap<String, String> roomInfo) {
-        model.removeRoomInfo(roomInfo.get("id"));
+    public void onRoomRemoved(Room room) {
+        model.removeRoom(room.getId());
         controller.updateRoomButtons();
-        System.out.println("ROOM REMOVED");
     }
 
     @Override
-    public void onRoomChanged(HashMap<String, String> roomInfo) {
-        model.putRoomInfo(roomInfo);
+    public void onRoomChanged(Room room) {
+        model.putRoom(room);
         controller.updateRoomButtons();
-        System.out.println("ROOM CHANGED");
     }
 }

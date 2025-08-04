@@ -57,7 +57,7 @@ public class SceneManager {
         if (primaryStage.getScene() != null) sceneWidth = primaryStage.getScene().getWidth();
         if (primaryStage.getScene() != null) sceneHeight = primaryStage.getScene().getHeight();
         primaryStage.setOnCloseRequest((_) -> {
-            String roomId = Client.CurrentRoom.getRoomId();
+            String roomId = Client.CurrentRoom.getId();
             String clientId = Client.getClientId();
             if ((clientId != null) && (roomId != null)) FirebaseWriter.removeClientFromRoom(clientId, roomId);
         });

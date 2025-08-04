@@ -11,7 +11,8 @@ public class GameModel {
 
     public GameModel() {
         currentRoom = Client.CurrentRoom;
-        roomId = currentRoom.getRoomId();
+        roomId = currentRoom.getId();
+        System.out.println("new GameModel: " + roomId);
         currentGameState = Client.CurrentGameState;
     }
 }

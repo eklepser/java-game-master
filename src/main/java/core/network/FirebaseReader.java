@@ -1,24 +1,27 @@
 package core.network;
 
-import com.google.firebase.database.*;
-import java.util.HashMap;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
+import core.logic.Room;
+
 import java.util.concurrent.CompletableFuture;
 
 public class FirebaseReader {
-    public static CompletableFuture<HashMap<String, String>> getRoomInfo(String roomId) {
-        CompletableFuture<HashMap<String, String>> future = new CompletableFuture<>();
+    public static CompletableFuture<Room> getRoom(String roomId) {
+        CompletableFuture<Room> future = new CompletableFuture<>();
 
         FirebaseTools.getRoomInfoRefByRoomId(roomId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot ds) {
-                HashMap<String, String> roomInfo = new HashMap<>() {{
-                    put("name", (String) ds.child("name").getValue());
-                    put("gameMode", (String) ds.child("gameMode").getValue());
-                    put("password", (String) ds.child("password").getValue());
-                    put("allowToWatch", (String) ds.child("allowToWatch").getValue());
-                    put("size", (String) ds.child("size").getValue());
-                }};
-                future.complete(roomInfo);
+                Room room = new Room();
+                room.setId(roomId);
+                room.setName((String) ds.child("name").getValue());
+                room.setGameMode((String) ds.child("gameMode").getValue());
+                room.setPassword((String) ds.child("password").getValue());
+                room.setAllowToWatch((String) ds.child("allowToWatch").getValue());
+                room.setSize((String) ds.child("size").getValue());
+                future.complete(room);
             }
 
             @Override
