@@ -1,13 +1,14 @@
 package controllers.games.tictactoe_classic;
 
 import core.logic.Client;
+import core.logic.Player;
 import core.network.FirebaseWriter;
 import controllers.common.GameModel;
 import javafx.scene.control.Button;
 import java.util.HashMap;
 
 public class TictactoeModel extends GameModel {
-    private final HashMap<String, HashMap<String, String>> playersInfo = new HashMap<>();
+    private final HashMap<String, Player> allPlayers = new HashMap<>();
     private boolean isReadyForGame;
     private final Button[] gameFieldButtons;
 
@@ -16,22 +17,22 @@ public class TictactoeModel extends GameModel {
         gameFieldButtons = new Button[9];
     }
 
-    public HashMap<String, HashMap<String, String>> getPlayersInfo() { return playersInfo; }
+    public HashMap<String, Player> getAllPlayers() { return allPlayers; }
 
-    public void putPlayerInfo(HashMap<String, String> playerInfo) { playersInfo.put(playerInfo.get("id"), playerInfo); }
-    public void removePlayerInfo(String id) { playersInfo.remove(id); }
+    public void putPlayer(Player player) { allPlayers.put(player.getId(), player); }
+    public void removePlayerInfo(String id) { allPlayers.remove(id); }
 
-    public HashMap<String, String> getCurrentPlayerInfo() {
+    public Player getCurrentPlayer() {
         String currentTurn = currentGameState.getTurn();
         String prevTurn = TictactoeUtils.getOpponentTeam(currentTurn);
-        for (HashMap<String, String> playerInfo : playersInfo.values()) {
-            if (playerInfo.get("team").equals(prevTurn)) return playerInfo;
+        for (Player player : allPlayers.values()) {
+            if (player.getTeam().equals(prevTurn)) return player;
         }
         return null;
     }
 
     public void setReadyStatus(Boolean isReady) { isReadyForGame = isReady; }
-    public boolean getReadyStatus() { return isReadyForGame; }
+    public boolean isReadyStatus() { return isReadyForGame; }
 
     public void switchReadyStatus() { isReadyForGame = !isReadyForGame; }
 
@@ -58,7 +59,7 @@ public class TictactoeModel extends GameModel {
     }
 
     public void startGame() {
-        FirebaseWriter.setRandomTeams(roomId, playersInfo);
+        FirebaseWriter.setRandomTeams(roomId, allPlayers);
         FirebaseWriter.setGameGlobalState(roomId, "playing");
         FirebaseWriter.setCurrentTurn(roomId, "0");
         sendMessage("Game started", true);

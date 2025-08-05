@@ -1,5 +1,6 @@
 package controllers.games.tictactoe_classic;
 
+import core.logic.Player;
 import core.scenes.SceneManager;
 import core.logic.Client;
 import core.network.FirebaseListener;
@@ -24,7 +25,6 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Objects;
 
 public class TictactoeController extends GameController {
@@ -84,7 +84,7 @@ public class TictactoeController extends GameController {
 
     public void onReadyButton(ActionEvent actionEvent) {
         model.switchReadyStatus();
-        if (model.getReadyStatus()) {
+        if (model.isReadyStatus()) {
             FirebaseWriter.setPlayerIsReady(model.roomId, Client.getClientId(), true);
             FirebaseReader.getPlayersReadyAmount(model.roomId).thenAccept(playersReady -> {
                 String maxSize = model.currentRoom.getSize();
@@ -181,8 +181,8 @@ public class TictactoeController extends GameController {
         StringBuilder text = new StringBuilder();
         text.append("Room: ").append(model.currentRoom.getName()).append("\n");
         text.append("Players: ");
-        for (HashMap<String, String> playerInfo : model.getPlayersInfo().values()) {
-            text.append("\n").append(playerInfo.get("name"));
+        for (Player player : model.getAllPlayers().values()) {
+            text.append("\n").append(player.getName());
         }
         Platform.runLater(() -> roomInfoLabel.setText(text.toString()));
     }

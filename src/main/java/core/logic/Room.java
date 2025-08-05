@@ -10,7 +10,6 @@ public class Room {
     private String allowToWatch;
     private String size;
     private ArrayList<String> players;
-    private int playersCount;
 
     public Room() {
         id = "";
@@ -20,7 +19,6 @@ public class Room {
         allowToWatch = "";
         size = "";
         players = new ArrayList<>();
-        playersCount = 0;
     }
 
     public String getId() { return id; }
@@ -42,8 +40,8 @@ public class Room {
     public void setSize(String size) { this.size = size; }
 
     public ArrayList<String> getPlayers() { return players; }
-    public void setPlayers(ArrayList<String> players) { this.players = players; }
+    public void addPlayer(String player) { players.add(player); }
 
+    public void clearPlayers() { players.clear(); }
     public int getPlayersCount() { return players.size(); }
-    public void setPlayersCount(int pc) { playersCount = pc; }
 }

@@ -1,12 +1,11 @@
 package controllers.games.tictactoe_classic;
 
 import core.logic.Client;
+import core.logic.Player;
 import core.network.FirebaseListener;
 import core.network.FirebaseWriter;
 import controllers.common.GameNetworkListener;
 import javafx.application.Platform;
-import javafx.scene.control.Button;
-import java.util.HashMap;
 
 public class TictactoeNetworkListener extends GameNetworkListener {
     private TictactoeModel model;
@@ -25,20 +24,20 @@ public class TictactoeNetworkListener extends GameNetworkListener {
     }
 
     @Override
-    public void onPlayerAdded(HashMap<String, String> playerInfo) {
-        model.putPlayerInfo(playerInfo);
+    public void onPlayerAdded(Player player) {
+        model.putPlayer(player);
         controller.updateRoomInfoLabel();
     }
 
     @Override
-    public void onPlayerRemoved(HashMap<String, String> playerInfo) {
-        model.removePlayerInfo(playerInfo.get("id"));
+    public void onPlayerRemoved(Player player) {
+        model.removePlayerInfo(player.getId());
         controller.updateRoomInfoLabel();
     }
 
     @Override
-    public void onPlayerInfoChanged(HashMap<String, String> playerInfo) {
-        model.putPlayerInfo(playerInfo);
+    public void onPlayerInfoChanged(Player player) {
+        model.putPlayer(player);
     }
 
     @Override
@@ -82,7 +81,7 @@ public class TictactoeNetworkListener extends GameNetworkListener {
 
         String finishMessage;
         if (isDraw) finishMessage = "Game finished with a draw";
-        else finishMessage = "Winner is " + model.getCurrentPlayerInfo().get("name");
+        else finishMessage = "Winner is " + model.getCurrentPlayer().getName();
         controller.updateCurrentTurnLabel(finishMessage);
     }
 

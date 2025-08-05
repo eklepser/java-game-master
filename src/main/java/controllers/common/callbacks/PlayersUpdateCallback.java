@@ -1,9 +1,11 @@
 package controllers.common.callbacks;
 
+import core.logic.Player;
+
 import java.util.HashMap;
 
 public interface PlayersUpdateCallback {
-    void onPlayerAdded(HashMap<String, String> playerInfo);
-    void onPlayerRemoved(HashMap<String, String> playerInfo);
-    void onPlayerInfoChanged(HashMap<String, String> playerInfo);
+    void onPlayerAdded(Player player);
+    void onPlayerRemoved(Player player);
+    void onPlayerInfoChanged(Player player);
 }

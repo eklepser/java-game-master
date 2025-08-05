@@ -3,8 +3,11 @@ package core.network;
 import core.logic.Client;
 import controllers.common.callbacks.*;
 import com.google.firebase.database.*;
+import core.logic.Player;
 import core.logic.Room;
 import javafx.application.Platform;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -24,7 +27,6 @@ public class FirebaseListener {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 String newMessage = dataSnapshot.getValue(String.class);
-                System.out.println("NEW MSG: " + newMessage);
                 Platform.runLater(() -> callback.onMessageAdded(newMessage));
             }
 
@@ -129,38 +131,36 @@ public class FirebaseListener {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 Platform.runLater(() -> {
-                    HashMap<String, String> playerInfo = getPlayerInfo(dataSnapshot);
-                    System.out.println("new player " + playerInfo.get("name"));
-                    callback.onPlayerAdded(playerInfo);
+                    Player player = getPlayer(dataSnapshot);
+                    callback.onPlayerAdded(player);
                 });
             }
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
                 Platform.runLater(() -> {
-                    HashMap<String, String> playerInfo = getPlayerInfo(dataSnapshot);
-                    callback.onPlayerRemoved(playerInfo);
+                    Player player = getPlayer(dataSnapshot);
+                    callback.onPlayerRemoved(player);
                 });
             }
 
             @Override public void onChildChanged(DataSnapshot dataSnapshot, String s) {
                 Platform.runLater(() -> {
-                    HashMap<String, String> playerInfo = getPlayerInfo(dataSnapshot);
-                    callback.onPlayerInfoChanged(playerInfo);
+                    Player player = getPlayer(dataSnapshot);
+                    callback.onPlayerInfoChanged(player);
                 });
             }
 
             @Override public void onChildMoved(DataSnapshot dataSnapshot, String s) { }
             @Override public void onCancelled(DatabaseError databaseError) { }
 
-            private HashMap<String, String> getPlayerInfo(DataSnapshot ds) {
-                return new HashMap<>() {{
-                    put("id", ds.getKey());
-                    put("name", (String) ds.child("name").getValue());
-                    Boolean isReady = ds.child("isReady").getValue(Boolean.class);
-                    put("isReady", String.valueOf(isReady));
-                    put("team", (String) ds.child("team").getValue());
-                }};
+            private Player getPlayer(DataSnapshot ds) {
+                Player player = new Player();
+                player.setId(ds.getKey());
+                player.setName((String) ds.child("name").getValue());
+                player.setReady(ds.child("isReady").getValue(Boolean.class));
+                player.setTeam((String) ds.child("team").getValue());
+                return player;
             }
         };
 
@@ -205,7 +205,10 @@ public class FirebaseListener {
                 room.setPassword((String) ds.child("info/password").getValue());
                 room.setAllowToWatch((String) ds.child("info/allowToWatch").getValue());
                 room.setSize((String) ds.child("info/size").getValue());
-                room.setPlayersCount((int) ds.child("players").getChildrenCount());
+                room.clearPlayers();
+                for (DataSnapshot dsp : ds.child("players").getChildren()) {
+                    room.addPlayer((String) dsp.child("name").getValue());
+                }
                 return room;
             }
         };

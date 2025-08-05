@@ -27,7 +27,7 @@
         <HBox alignment="BOTTOM_CENTER">
 
         <VBox maxWidth="300">
-            <ScrollPane fx:id="chatScrollPane" prefHeight="180" fitToWidth="true">
+            <ScrollPane fx:id="chatScrollPane" prefHeight="100" maxHeight="140" fitToWidth="true">
                 <padding>
                     <Insets top="4" bottom="4" left="4" right="4"/>
                 </padding>

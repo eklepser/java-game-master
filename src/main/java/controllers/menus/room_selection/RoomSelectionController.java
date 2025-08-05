@@ -8,7 +8,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import java.io.IOException;
@@ -16,11 +15,9 @@ import java.util.HashMap;
 
 public class RoomSelectionController  {
     private RoomSelectionModel model;
-    private RoomSelectionNetworkListener network;
     private final HashMap<String, String> searchFilters = new HashMap<>();
 
     @FXML private VBox roomListBox;
-    @FXML private HBox searchFiltersBox;
     @FXML private TextField searchTextField;
     @FXML private ComboBox<String> gameModeComboBox;
     @FXML private ToggleButton showLockedRoomsButton;
@@ -28,7 +25,7 @@ public class RoomSelectionController  {
 
     public void initialize() {
         model = new RoomSelectionModel();
-        network = new RoomSelectionNetworkListener(model, this);
+        new RoomSelectionNetworkListener(model, this);
     }
 
     @FXML
@@ -77,7 +74,6 @@ public class RoomSelectionController  {
 
     private boolean isMatchingFilters(Room room) {
         String fNameCorrected = searchFilters.get("f_name").toLowerCase().replaceAll("\\s", "");
-        System.out.println("NAME: "+room.getName());
         String nameCorrected = room.getName().toLowerCase().replaceAll("\\s", "");
         boolean isMatching = (nameCorrected.startsWith(fNameCorrected));
 

@@ -2,6 +2,7 @@ package core.network;
 
 import core.logic.Client;
 import com.google.firebase.database.DatabaseReference;
+import core.logic.Player;
 import core.logic.Room;
 
 import java.util.ArrayList;
@@ -78,7 +79,7 @@ public class FirebaseWriter {
         playersRef.child(clientId).removeValueAsync();
     }
 
-    public static void setRandomTeams(String roomId, HashMap<String, HashMap<String, String>> playersInfo) {
+    public static void setRandomTeams(String roomId, HashMap<String, Player> allPlayers) {
         ArrayList<String> teams = new ArrayList<>();
         int team = random.nextInt(2);
         teams.add(String.valueOf(team));
@@ -86,8 +87,8 @@ public class FirebaseWriter {
         teams.add(String.valueOf(Math.abs(team - 1)));
 
         int i = 0;
-        for (HashMap<String, String> playerInfo : playersInfo.values()) {
-            setPlayerTeam(roomId, playerInfo.get("id"), teams.get(i));
+        for (Player player : allPlayers.values()) {
+            setPlayerTeam(roomId, player.getId(), teams.get(i));
             i++;
             if (i == 2) i = 0;
         }

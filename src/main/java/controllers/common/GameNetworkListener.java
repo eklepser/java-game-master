@@ -1,6 +1,8 @@
 package controllers.common;
 
 import controllers.common.callbacks.*;
+import core.logic.Player;
+
 import java.util.HashMap;
 
 public abstract class GameNetworkListener implements
@@ -31,11 +33,11 @@ public abstract class GameNetworkListener implements
     public void onNewTurn(String currentTurn) { }
 
     @Override
-    public void onPlayerAdded(HashMap<String, String> playerInfo) { }
+    public void onPlayerAdded(Player player) { }
 
     @Override
-    public void onPlayerRemoved(HashMap<String, String> playerInfo) { }
+    public void onPlayerRemoved(Player player) { }
 
     @Override
-    public void onPlayerInfoChanged(HashMap<String, String> playerInfo) { }
+    public void onPlayerInfoChanged(Player player) { }
 }
