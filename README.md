@@ -1,4 +1,4 @@
-## 🎮 Java Game Master
+# 🎮 Java Game Master
 
 A simple multiplayer game application built with JavaFX and Firebase, designed to help users create game rooms and play mini-games like Tic-Tac-Toe in real time.
 
