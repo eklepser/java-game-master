@@ -3,11 +3,6 @@ package controllers.menus.room_selection;
 import core.logic.Room;
 import core.network.FirebaseListener;
 import core.network.FirebaseManager;
-import core.scenes.SceneManager;
-import core.scenes.ScenePath;
-import javafx.application.Platform;
-
-import java.io.IOException;
 import java.util.HashMap;
 
 public class RoomSelectionModel {

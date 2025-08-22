@@ -11,7 +11,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import core.scenes.SceneManager;
 import core.scenes.ScenePath;
 import javafx.application.Platform;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -47,6 +46,7 @@ public class FirebaseManager {
             String clientId = FirebaseWriter.addClientToRoom(roomId);
             Client.setClientId(clientId);
 
+            System.out.println("Client attached to room " + room.getId());
             Platform.runLater(() -> {
                 try {
                     SceneManager.loadScene(getGameModeFXML(room.getGameMode()));

@@ -8,8 +8,8 @@ public class Room {
     private String gameMode;
     private String password;
     private String allowToWatch;
-    private String size;
-    private ArrayList<String> players;
+    private int size;
+    private final ArrayList<String> players;
 
     public Room() {
         id = "";
@@ -17,7 +17,7 @@ public class Room {
         gameMode = "";
         password = "";
         allowToWatch = "";
-        size = "";
+        size = 999;
         players = new ArrayList<>();
     }
 
@@ -36,8 +36,9 @@ public class Room {
     public String getAllowToWatch() { return allowToWatch; }
     public void setAllowToWatch(String allowToWatch) { this.allowToWatch = allowToWatch; }
 
-    public String getSize() { return size; }
-    public void setSize(String size) { this.size = size; }
+    public int getSize() { return size; }
+    public void setSize(int size) { this.size = size; }
+    public boolean isFull() { return size <= players.size(); }
 
     public ArrayList<String> getPlayers() { return players; }
     public void addPlayer(String player) { players.add(player); }

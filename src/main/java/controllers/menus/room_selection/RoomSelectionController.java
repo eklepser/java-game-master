@@ -33,6 +33,13 @@ public class RoomSelectionController  {
         model.setSelectedRoom(roomId);
         Room room = model.getSelectedRoom();
         String roomPassword = room.getPassword();
+        if (room.isFull())
+        {
+            SceneManager.setUserData(model);
+            Stage warningStage = SceneManager.loadModalScene(ScenePath.FULL_ROOM_WARNING, 300, 120);
+            warningStage.showAndWait();
+            return;
+        }
         if (!roomPassword.isEmpty()) {
             SceneManager.setUserData(model);
             Stage submitStage = SceneManager.loadModalScene(ScenePath.PASSWORD_CONFIRMATION, 300, 120);
@@ -80,10 +87,9 @@ public class RoomSelectionController  {
         String fMode = searchFilters.get("f_mode");
         String fLocked = searchFilters.get("f_locked");
         String fFull = searchFilters.get("f_full");
-        String playersCount = String.valueOf(room.getPlayersCount());
         if (!fMode.equals("All games")) isMatching = isMatching && (room.getGameMode().equals(fMode));
         if (fLocked.equals("false")) isMatching = isMatching && (room.getPassword().isEmpty());
-        if (fFull.equals("false")) isMatching = isMatching && !(room.getSize().equals(playersCount));
+        if (fFull.equals("false")) isMatching = isMatching && (room.getSize() > room.getPlayersCount());
 
         return isMatching;
     }

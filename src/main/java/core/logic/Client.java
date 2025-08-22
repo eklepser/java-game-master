@@ -9,6 +9,7 @@ public class Client {
     private static String clientTeam = "";
     private static String clientName = "player" + (int)(rnd.nextFloat()*1000);
 
+
     public static Room CurrentRoom = new Room();
     public static GameState CurrentGameState = new GameState();
 

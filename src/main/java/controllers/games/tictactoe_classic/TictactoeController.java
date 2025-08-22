@@ -56,9 +56,7 @@ public class TictactoeController extends GameController {
         readyButton.setPrefWidth(60);
         readyButton.setOnAction(this::onReadyButton);
         finishButton = new Button("New Game");
-
         finishButton.setOnAction((_) -> onFinishButton(finishButton));
-
         gameFieldBox = new VBox();
         gameFieldBox.setAlignment(Pos.CENTER);
         currentTurnLabel = new Label();
@@ -87,10 +85,10 @@ public class TictactoeController extends GameController {
         if (model.isReadyStatus()) {
             FirebaseWriter.setPlayerIsReady(model.roomId, Client.getClientId(), true);
             FirebaseReader.getPlayersReadyAmount(model.roomId).thenAccept(playersReady -> {
-                String maxSize = model.currentRoom.getSize();
-                String message = TictactoeUtils.getReadyMessage(String.valueOf(playersReady), maxSize);
+                int size = model.currentRoom.getSize();
+                String message = TictactoeUtils.getReadyMessage(String.valueOf(playersReady), size);
                 model.sendMessage(message, true);
-                boolean isAllPlayersReady = Objects.equals(String.valueOf(playersReady), maxSize);
+                boolean isAllPlayersReady = (playersReady == size);
                 if (isAllPlayersReady) {
                     model.startGame();
                 }
@@ -146,9 +144,12 @@ public class TictactoeController extends GameController {
         FirebaseListener.removeAllListeners();
         FirebaseWriter.removeClientFromRoom(Client.getClientId(), model.roomId);
         FirebaseManager.releaseClient();
-
         model.sendMessage(Client.getClientName() + " left the room", true);
-
+        if (model.getAllPlayers().size() <= 1)
+        {
+            System.out.println("room is empty");
+            FirebaseWriter.removeRoom(model.roomId);
+        }
         SceneManager.loadScene(ScenePath.ROOM_SELECTION);
     }
 

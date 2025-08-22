@@ -1,17 +1,13 @@
 package controllers.games.tictactoe_classic;
 
 import core.logic.Client;
-import javafx.scene.control.Button;
 import javafx.scene.text.Text;
-import java.util.HashMap;
 
 public class TictactoeUtils {
 
-    static String getReadyMessage(String playersReady, String maxSize) {
-        StringBuilder text = new StringBuilder();
-        text.append(Client.getClientName()).append(" is ready ");
-        text.append("(").append(playersReady).append("/").append(maxSize).append(")");
-        return text.toString();
+    static String getReadyMessage(String playersReady, int maxSize) {
+        return Client.getClientName() + " is ready " +
+                "(" + playersReady + "/" + maxSize + ")";
     }
 
     static Text getMessageText(String chatMessage) {

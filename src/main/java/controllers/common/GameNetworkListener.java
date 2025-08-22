@@ -3,8 +3,6 @@ package controllers.common;
 import controllers.common.callbacks.*;
 import core.logic.Player;
 
-import java.util.HashMap;
-
 public abstract class GameNetworkListener implements
         PlayersUpdateCallback, ChatUpdateCallback, GameStateUpdateCallback, ClientUpdateCallback {
 

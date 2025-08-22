@@ -15,6 +15,7 @@ module org.example.javava {
     requires org.checkerframework.checker.qual;
     requires java.desktop;
     requires google.cloud.firestore;
+    requires com.fasterxml.jackson.databind;
 
     exports core.network;
     opens core.network to javafx.fxml;

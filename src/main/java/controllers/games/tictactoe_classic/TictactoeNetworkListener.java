@@ -8,8 +8,8 @@ import controllers.common.GameNetworkListener;
 import javafx.application.Platform;
 
 public class TictactoeNetworkListener extends GameNetworkListener {
-    private TictactoeModel model;
-    private TictactoeController controller;
+    private final TictactoeModel model;
+    private final TictactoeController controller;
 
     private boolean isFirstInit = true;
     private boolean isChatHistoryLoaded = false;
@@ -32,6 +32,10 @@ public class TictactoeNetworkListener extends GameNetworkListener {
     @Override
     public void onPlayerRemoved(Player player) {
         model.removePlayerInfo(player.getId());
+        if (model.getAllPlayers().isEmpty())
+        {
+            FirebaseWriter.removeRoom(model.roomId);
+        }
         controller.updateRoomInfoLabel();
     }
 

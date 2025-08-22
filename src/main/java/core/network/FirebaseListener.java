@@ -1,13 +1,11 @@
 package core.network;
 
-import core.logic.Client;
-import controllers.common.callbacks.*;
 import com.google.firebase.database.*;
+import controllers.common.callbacks.*;
+import core.logic.Client;
 import core.logic.Player;
 import core.logic.Room;
 import javafx.application.Platform;
-
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -158,7 +156,8 @@ public class FirebaseListener {
                 Player player = new Player();
                 player.setId(ds.getKey());
                 player.setName((String) ds.child("name").getValue());
-                player.setReady(ds.child("isReady").getValue(Boolean.class));
+                Boolean isReady = ds.child("isReady").getValue(Boolean.class);
+                player.setReady(isReady != null ? isReady : false);
                 player.setTeam((String) ds.child("team").getValue());
                 return player;
             }
@@ -204,7 +203,7 @@ public class FirebaseListener {
                 room.setGameMode((String) ds.child("info/gameMode").getValue());
                 room.setPassword((String) ds.child("info/password").getValue());
                 room.setAllowToWatch((String) ds.child("info/allowToWatch").getValue());
-                room.setSize((String) ds.child("info/size").getValue());
+                room.setSize(ds.child("info/size").getValue(Integer.class));
                 room.clearPlayers();
                 for (DataSnapshot dsp : ds.child("players").getChildren()) {
                     room.addPlayer((String) dsp.child("name").getValue());

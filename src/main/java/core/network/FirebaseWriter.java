@@ -13,10 +13,10 @@ public class FirebaseWriter {
     private static final Random random = new Random();
 
     public static String addRoom(Room room) {
-       return addRoom(room, "2");
+       return addRoom(room, 2);
     }
 
-    public static String addRoom(Room room, String roomSize) {
+    public static String addRoom(Room room, int roomSize) {
         DatabaseReference newRoomRef = FirebaseTools.roomsRef.push();
         String roomId = newRoomRef.getKey();
         DatabaseReference newRoomInfoRef = FirebaseTools.getRoomInfoRefByRoomId(roomId);
@@ -32,6 +32,11 @@ public class FirebaseWriter {
         newRoomGameStateRef.child("currentTurn").setValueAsync("0");
         newRoomGameStateRef.child("gameMap").setValueAsync("---------");
         return roomId;
+    }
+
+    public static void removeRoom(String roomId) {
+        DatabaseReference roomRef = FirebaseTools.getRoomRefByRoomId(roomId);
+        roomRef.removeValueAsync();
     }
 
     public static String addClientToRoom(String roomId) {

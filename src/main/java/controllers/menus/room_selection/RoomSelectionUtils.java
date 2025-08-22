@@ -1,18 +1,10 @@
 package controllers.menus.room_selection;
 
 import core.logic.Room;
-import core.network.FirebaseListener;
-import core.network.FirebaseManager;
-import core.scenes.SceneManager;
-import core.scenes.ScenePath;
-import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
-
-import java.io.IOException;
-import java.util.HashMap;
 
 public class RoomSelectionUtils {
     public static BorderPane getRoomButtonGraphics(Room room) {
@@ -22,9 +14,7 @@ public class RoomSelectionUtils {
         TextFlow leftTextFlow = new TextFlow(name, mode);
         leftTextFlow.setStyle("-fx-font-size: 16px;");
 
-        String playersCount = String.valueOf(room.getPlayersCount());
-        String size = room.getSize();
-        Text fullness = new Text(playersCount + "/" + size);
+        Text fullness = new Text(room.getPlayersCount() + "/" + room.getSize());
         Text status = new Text(getRoomInfoIcons(room));
         TextFlow rightTextFlow = new TextFlow(fullness, status);
         rightTextFlow.setStyle("-fx-font-size: 16px;");

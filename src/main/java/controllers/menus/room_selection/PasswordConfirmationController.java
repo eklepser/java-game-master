@@ -1,18 +1,13 @@
 package controllers.menus.room_selection;
 
 import core.logic.Room;
-import core.network.FirebaseListener;
 import core.scenes.SceneManager;
-import core.scenes.ScenePath;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
-
-import java.util.HashMap;
 
 public class PasswordConfirmationController {
     private RoomSelectionModel model;

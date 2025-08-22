@@ -20,7 +20,7 @@ public class FirebaseReader {
                 room.setGameMode((String) ds.child("gameMode").getValue());
                 room.setPassword((String) ds.child("password").getValue());
                 room.setAllowToWatch((String) ds.child("allowToWatch").getValue());
-                room.setSize((String) ds.child("size").getValue());
+                room.setSize(ds.child("size").getValue(Integer.class));
                 future.complete(room);
             }
 
