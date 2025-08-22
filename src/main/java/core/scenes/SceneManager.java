@@ -5,10 +5,12 @@ import core.logic.Client;
 import core.network.FirebaseWriter;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import java.io.IOException;
+import java.util.Objects;
 
 public class SceneManager {
     private static Stage primaryStage;
@@ -54,6 +56,9 @@ public class SceneManager {
     private static void setupPrimaryStage() {
         primaryStage.setMinWidth(600);
         primaryStage.setMinHeight(400);
+        primaryStage.setTitle("Game Master");
+        Image icon = new Image(Objects.requireNonNull(SceneManager.class.getResourceAsStream("/icon.png"))); // e.g., 16x16, 32x32, or 64x64 PNG
+        primaryStage.getIcons().add(icon);
         if (primaryStage.getScene() != null) sceneWidth = primaryStage.getScene().getWidth();
         if (primaryStage.getScene() != null) sceneHeight = primaryStage.getScene().getHeight();
         primaryStage.setOnCloseRequest((_) -> {
